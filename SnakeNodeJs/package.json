@@ -1,0 +1,15 @@
+{
+  "name": "snake-node-js",
+  "version": "0.0.0",
+  "description": "SnakeNodeJs",
+  "main": "app.js",
+  "author": {
+    "name": "micha"
+  },
+  "dependencies": {
+    "express": "^4.14.1",
+    "retyped-express-tsd-ambient": "0.0.0-0",
+    "retyped-socket.io-tsd-ambient": "^1.4.4-0",
+    "socket.io": "^1.7.2"
+  }
+}
