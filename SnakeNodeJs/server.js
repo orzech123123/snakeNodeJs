@@ -1,10 +1,13 @@
 /// <reference path="./Scripts/typings/node/node.d.ts"/>
 /// <reference path="./node_modules/retyped-express-tsd-ambient/express.d.ts"/>
 /// <reference path="./node_modules/retyped-socket.io-tsd-ambient/socket.io.d.ts"/>
-var express = require("express")();
-var httpServer = require("http").Server(express);
+"use strict";
+var express = require("express");
 var socketIo = require("socket.io");
-var socket = socketIo(httpServer);
+var http = require("http");
+var application = express();
+var server = http.Server(application);
+var socket = socketIo(server);
 socket.on("connection", function (socket) {
     console.log("connection");
     socket.on("pingx", function (msg) {
@@ -13,10 +16,10 @@ socket.on("connection", function (socket) {
     });
     socket.on("CH01", function (from, msg) {
         var a = new MyClass(333);
-        console.log("MSG", from, " saying ", a.a);
+        console.log("This is message", from, " saying ", msg);
     });
 });
-httpServer.listen(3000, function () {
+server.listen(3000, function () {
     console.log("listening on *:3000");
 });
 var MyClass = (function () {
