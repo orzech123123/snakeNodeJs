@@ -2,17 +2,19 @@
 /// <reference path="./node_modules/retyped-express-tsd-ambient/express.d.ts"/>
 /// <reference path="./node_modules/retyped-socket.io-tsd-ambient/socket.io.d.ts"/>
 
-import Http = require("http");
+import * as http from "http";
+import * as express from "express";
+import * as socketio from "socket.io";
 
-var express = require("express");
-var socketIo = require("socket.io") as SocketIOStatic;
-var http = require("http");
+var application = express() as express.Express;
+var server = http.createServer(application) as http.Server;
+var socket = socketio(server) as SocketIO.Server;
 
-var application = express() as Express.Application;
-var server = http.Server(application) as Http.Server;
-var socket = socketIo(server) as SocketIO.Server;
+var clients: Array<SocketIO.Socket> = [];
 
 socket.on("connection", (socket: SocketIO.Socket) => {
+    clients.push(socket);
+
     console.log("connection");
 
     socket.on("pingx", (msg) => {
@@ -22,7 +24,7 @@ socket.on("connection", (socket: SocketIO.Socket) => {
 
     socket.on("CH01", (from, msg) => {
         var a = new MyClass(333);
-        console.log("This is message", from, " saying ", msg);
+        console.log("ORZECH321!!!", from, " saying ", msg);
     });
 });
 
@@ -36,3 +38,11 @@ class MyClass {
         this.a = a;
     }
 }
+
+setInterval(() => {
+    var randomClient: number;
+    if (clients.length > 0) {
+        randomClient = Math.floor(Math.random() * clients.length);
+        clients[randomClient].emit("random", randomClient);
+    }
+}, 500);
