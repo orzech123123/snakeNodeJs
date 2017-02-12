@@ -1,10 +1,8 @@
-/// <reference path="./Scripts/typings/node/node.d.ts"/>
-/// <reference path="./node_modules/retyped-express-tsd-ambient/express.d.ts"/>
-/// <reference path="./node_modules/retyped-socket.io-tsd-ambient/socket.io.d.ts"/>
 "use strict";
 var http = require("http");
 var express = require("express");
 var socketio = require("socket.io");
+var shapes = require("./X");
 var application = express();
 var server = http.createServer(application);
 var socket = socketio(server);
@@ -35,6 +33,12 @@ setInterval(function () {
     if (clients.length > 0) {
         randomClient = Math.floor(Math.random() * clients.length);
         clients[randomClient].emit("random", randomClient);
+        var a = new shapes.Square();
+        var a2 = new shapes.Triangle();
+        var b = a.Method2();
+        var b2 = a2.Method1();
+        console.log(b);
+        console.log(b2);
     }
 }, 500);
 //# sourceMappingURL=server.js.map
