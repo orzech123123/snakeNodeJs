@@ -39,7 +39,6 @@
     <TypeScriptCompile Include="server.ts" />
     <Content Include="package.json" />
     <Content Include="README.md" />
-    <TypeScriptCompile Include="X.ts" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Scripts\" />

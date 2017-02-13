@@ -2,43 +2,46 @@
 var http = require("http");
 var express = require("express");
 var socketio = require("socket.io");
-var shapes = require("./X");
-var application = express();
-var server = http.createServer(application);
-var socket = socketio(server);
-var clients = [];
-socket.on("connection", function (socket) {
-    clients.push(socket);
-    console.log("connection");
-    socket.on("pingx", function (msg) {
-        console.log(msg);
-        socket.emit("pongx", msg);
-    });
-    socket.on("CH01", function (from, msg) {
-        var a = new MyClass(333);
-        console.log("ORZECH321!!!", from, " saying ", msg);
-    });
-});
-server.listen(3000, function () {
-    console.log("listening on *:3000");
-});
-var MyClass = (function () {
-    function MyClass(a) {
-        this.a = a;
+var messages = require("../Data/Messages");
+var messageTypes = require("../Data/MessageTypes");
+var Server = (function () {
+    function Server() {
+        this.clients = [];
     }
-    return MyClass;
+    Server.prototype.Start = function () {
+        this.application = express();
+        this.server = http.createServer(this.application);
+        this.socket = socketio(this.server);
+        this.setOnConnection();
+        this.listen();
+    };
+    Server.prototype.setOnConnection = function () {
+        var _this = this;
+        this.socket.on(messageTypes.MessageTypes.Connection, function (client) {
+            console.log("connection");
+            _this.clients.push(client);
+            _this.setOnBoardAcknowledge(client);
+            client.emit(messageTypes.MessageTypes.BoardSc, _this.getBoard());
+        });
+    };
+    Server.prototype.getBoard = function () {
+        var board = new messages.Board();
+        board.Width = 50;
+        board.Height = 20;
+        return board;
+    };
+    Server.prototype.setOnBoardAcknowledge = function (client) {
+        client.on(messageTypes.MessageTypes.BoardAcknowledgeCs, function () {
+            console.log("client ack board");
+        });
+    };
+    Server.prototype.listen = function () {
+        this.server.listen(3000, function () {
+            console.log("listening on *:3000");
+        });
+    };
+    return Server;
 }());
-setInterval(function () {
-    var randomClient;
-    if (clients.length > 0) {
-        randomClient = Math.floor(Math.random() * clients.length);
-        clients[randomClient].emit("random", randomClient);
-        var a = new shapes.Square();
-        var a2 = new shapes.Triangle();
-        var b = a.Method2();
-        var b2 = a2.Method1();
-        console.log(b);
-        console.log(b2);
-    }
-}, 500);
+var server = new Server();
+server.Start();
 //# sourceMappingURL=server.js.map

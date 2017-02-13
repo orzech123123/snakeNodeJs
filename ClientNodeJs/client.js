@@ -1,32 +1,29 @@
-/// <reference path="./node_modules/retyped-socket.io-client-tsd-ambient/socket.io-client.d.ts"/>
-/// <reference path="./node_modules/retyped-moment-tsd-ambient/moment-node.d.ts"/>
 "use strict";
-var moment = require("moment");
+var messageTypes = require("../Data/MessageTypes");
 var socketio = require("socket.io-client");
-var socket = socketio.connect("http://localhost:3000", { reconnection: true });
-socket.on("connect", function (socket) {
-    console.log("Connected!");
-});
-socket.on("pongx", function (msg) {
-    console.log(msg);
-});
-socket.on("random", function (msg) {
-    console.log("-----------" + msg + "------------");
-});
-socket.emit("pingx", "ee");
-socket.emit("CH01", "me", "ORZECH!!!");
-var PingPonger = (function () {
-    function PingPonger() {
+var Client = (function () {
+    function Client() {
     }
-    PingPonger.prototype.PingPong = function () {
-        var _this = this;
-        setTimeout(function () {
-            socket.emit("pingx", moment().format());
-            _this.PingPong();
-        }, 3000);
+    Client.prototype.Connect = function () {
+        this.socket = socketio.connect("http://localhost:3000", { reconnection: true });
+        this.setOnConnect();
+        this.setOnBoardSc();
     };
-    return PingPonger;
+    Client.prototype.setOnConnect = function () {
+        this.socket.on(messageTypes.MessageTypes.Connect, function (server) {
+            console.log("Connected!");
+        });
+    };
+    Client.prototype.setOnBoardSc = function () {
+        var _this = this;
+        this.socket.on(messageTypes.MessageTypes.BoardSc, function (board) {
+            console.log(board.Width);
+            console.log(board.Height);
+            _this.socket.emit(messageTypes.MessageTypes.BoardAcknowledgeCs, 1);
+        });
+    };
+    return Client;
 }());
-var pp = new PingPonger();
-pp.PingPong();
+var client = new Client();
+client.Connect();
 //# sourceMappingURL=client.js.map

@@ -1,35 +1,43 @@
 ﻿/// <reference path="./node_modules/retyped-socket.io-client-tsd-ambient/socket.io-client.d.ts"/>
 /// <reference path="./node_modules/retyped-moment-tsd-ambient/moment-node.d.ts"/>
+/// <reference path="../Data/Messages.ts"/>
+/// <reference path="../Data/MessageTypes.ts"/>
 
+import * as messages from "../Data/Messages";
+import * as messageTypes from "../Data/MessageTypes";
 import * as moment from "moment";
 import * as socketio from "socket.io-client";
 
-var socket = socketio.connect("http://localhost:3000", { reconnection: true });
+class Client {
+    private socket: SocketIOClient.Socket;
 
-socket.on("connect", (socket: SocketIOClient.Socket) => {
-    console.log("Connected!");
-});
+    constructor() {
+        
+    }
 
-socket.on("pongx", msg => {
-    console.log(msg);
-});
+    public Connect(): void {
+        this.socket = socketio.connect("http://localhost:3000", { reconnection: true });
 
-socket.on("random", msg => {
-    console.log("-----------" + msg + "------------");
-});
+        this.setOnConnect();
+        this.setOnBoardSc();
+    }
 
-socket.emit("pingx", "ee");
-socket.emit("CH01", "me", "ORZECH!!!");
 
-class PingPonger {
-    public PingPong() {
-        setTimeout(() => {
-            socket.emit("pingx", moment().format());
-            this.PingPong();
-        },
-            3000);
+    private setOnConnect(): void {
+        this.socket.on(messageTypes.MessageTypes.Connect, (server: SocketIOClient.Socket) => {
+            console.log("Connected!");
+        });
+    }
+
+    private setOnBoardSc(): void {
+        this.socket.on(messageTypes.MessageTypes.BoardSc, (board: messages.Board) => { 
+            console.log(board.Width);
+            console.log(board.Height);
+            
+            this.socket.emit(messageTypes.MessageTypes.BoardAcknowledgeCs, 1);
+        });
     }
 }
 
-var pp = new PingPonger();
-pp.PingPong();
+var client = new Client();
+client.Connect();

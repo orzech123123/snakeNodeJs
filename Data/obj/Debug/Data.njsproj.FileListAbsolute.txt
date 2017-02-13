@@ -1,0 +1,1 @@
+D:\p\SnakeNodeJs\Data\bin\Microsoft.NodejsTools.WebRole.dll
