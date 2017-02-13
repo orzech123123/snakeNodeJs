@@ -35,6 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="tsconfig.json" />
+    <TypeScriptCompile Include="BoardHelper.ts" />
     <TypeScriptCompile Include="Scripts\typings\node\node.d.ts" />
     <TypeScriptCompile Include="client.ts" />
     <Content Include="package.json" />

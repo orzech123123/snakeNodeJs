@@ -1,6 +1,8 @@
 "use strict";
 var messageTypes = require("../Data/MessageTypes");
 var socketio = require("socket.io-client");
+var boardx = require("./BoardHelper");
+var BoardHelper = boardx.BoardHelper;
 var Client = (function () {
     function Client() {
     }
@@ -17,8 +19,14 @@ var Client = (function () {
     Client.prototype.setOnBoardSc = function () {
         var _this = this;
         this.socket.on(messageTypes.MessageTypes.BoardSc, function (board) {
-            console.log(board.Width);
-            console.log(board.Height);
+            console.log("Asd");
+            console.log("Asd");
+            console.log("Asd");
+            console.log("Asd");
+            console.log("Asd");
+            console.log("Asd");
+            console.log('\x1Bc');
+            BoardHelper.DrawBoard(board);
             _this.socket.emit(messageTypes.MessageTypes.BoardAcknowledgeCs, 1);
         });
     };

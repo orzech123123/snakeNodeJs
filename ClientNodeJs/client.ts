@@ -7,6 +7,8 @@ import * as messages from "../Data/Messages";
 import * as messageTypes from "../Data/MessageTypes";
 import * as moment from "moment";
 import * as socketio from "socket.io-client";
+import * as boardx from "./BoardHelper";
+import BoardHelper = boardx.BoardHelper;
 
 class Client {
     private socket: SocketIOClient.Socket;
@@ -30,9 +32,16 @@ class Client {
     }
 
     private setOnBoardSc(): void {
-        this.socket.on(messageTypes.MessageTypes.BoardSc, (board: messages.Board) => { 
-            console.log(board.Width);
-            console.log(board.Height);
+        this.socket.on(messageTypes.MessageTypes.BoardSc, (board: messages.Board) => {
+            console.log("Asd");
+            console.log("Asd");
+            console.log("Asd");
+            console.log("Asd");
+            console.log("Asd");
+            console.log("Asd");
+
+            console.log('\x1Bc');
+            BoardHelper.DrawBoard(board);
             
             this.socket.emit(messageTypes.MessageTypes.BoardAcknowledgeCs, 1);
         });
