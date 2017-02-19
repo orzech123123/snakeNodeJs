@@ -36,6 +36,7 @@
     <TypeScriptCompile Include="app.ts" />
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <TypeScriptCompile Include="Enums.ts" />
     <TypeScriptCompile Include="Messages.ts" />
     <TypeScriptCompile Include="MessageTypes.ts" />
     <TypeScriptCompile Include="Scripts\typings\node\node.d.ts" />

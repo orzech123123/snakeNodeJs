@@ -2,6 +2,8 @@
     public static get Connect(): string { return "connect"; } 
     public static get Connection(): string { return "connection"; } 
 
-    public static get BoardSc(): string { return "boardSc"; }
-    public static get BoardAcknowledgeCs(): string { return "boardAcknowledgeCs"; } 
+    public static get Update(): string { return "update"; }
+    public static get UpdateAck(): string { return "updateAck"; } 
+
+    public static get ChangeDirection(): string { return "changeDirection"; } 
 }

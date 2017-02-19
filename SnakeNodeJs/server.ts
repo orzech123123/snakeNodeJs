@@ -5,16 +5,22 @@
 /// <reference path="../Data/MessageTypes.ts"/>
 
 import * as http from "http";
+import { TS } from "./node_modules/typescript-linq/TS";
 import * as express from "express";
 import * as socketio from "socket.io";
 import * as messages from "../Data/Messages";
 import * as messageTypes from "../Data/MessageTypes";
+import * as snake from "./Scripts/Snake";
+import Snake = snake.Snake;
 
 class Server {
-    public clients: Array<SocketIO.Socket> = [];
+    public snakes: Array<snake.Snake> = [];
     private application: express.Express;
     private server: http.Server;
-    private socket : SocketIO.Server;
+    private socket: SocketIO.Server;
+
+    private width = 50;
+    private height = 20;
 
     constructor() {
     }
@@ -27,30 +33,16 @@ class Server {
         this.setOnConnection();
 
         this.listen();
+
+        this.setLoop();
     }
 
     private setOnConnection() {
         this.socket.on(messageTypes.MessageTypes.Connection, (client: SocketIO.Socket) => {
-            console.log("connection");
-            this.clients.push(client);
+            console.log("Client connected: " + client.id);
 
-            this.setOnBoardAcknowledge(client);
-
-            client.emit(messageTypes.MessageTypes.BoardSc, this.getBoard());
-        });
-    }
-
-    private getBoard(): messages.Board {
-        var board = new messages.Board();
-        board.Width = 50;
-        board.Height = 20;
-
-        return board;
-    }
-
-    private setOnBoardAcknowledge(client: SocketIO.Socket): void {
-        client.on(messageTypes.MessageTypes.BoardAcknowledgeCs, () => {
-            console.log("client ack board");
+            var snake = new Snake(client, this.width, this.height);
+            this.snakes.push(snake);
         });
     }
 
@@ -58,6 +50,34 @@ class Server {
         this.server.listen(3000, () => {
             console.log("listening on *:3000");
         });
+    }
+
+    private update(): void {
+        for (let snake of this.snakes) {
+            snake.Update();
+        }
+
+        //TODO logic
+        
+        var update = new messages.Update();
+
+        //-----------
+        var tmp = new TS.Collections.List<messages.Point>(true);
+        for (let snake of this.snakes) {
+            tmp.add(snake.GetCoordinations());
+        }
+        update.Points = tmp.toArray();
+        //-----------
+
+        for (let snake of this.snakes) {
+            snake.SendUpdate(update);
+        }
+    }
+
+    private setLoop(): void {
+        setInterval(() => {
+            this.update();
+        }, 1000);
     }
 }
 

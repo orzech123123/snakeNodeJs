@@ -12,13 +12,18 @@ var MessageTypes = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(MessageTypes, "BoardSc", {
-        get: function () { return "boardSc"; },
+    Object.defineProperty(MessageTypes, "Update", {
+        get: function () { return "update"; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(MessageTypes, "BoardAcknowledgeCs", {
-        get: function () { return "boardAcknowledgeCs"; },
+    Object.defineProperty(MessageTypes, "UpdateAck", {
+        get: function () { return "updateAck"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(MessageTypes, "ChangeDirection", {
+        get: function () { return "changeDirection"; },
         enumerable: true,
         configurable: true
     });
