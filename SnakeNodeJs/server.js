@@ -52,7 +52,7 @@ var Server = (function () {
         var _this = this;
         setInterval(function () {
             _this.update();
-        }, 1000);
+        }, 100);
     };
     return Server;
 }());

@@ -38,8 +38,12 @@ var Client = (function () {
         var _loop_1 = function (row) {
             rowString = "";
             var _loop_2 = function (col) {
+                if (col == 0 || col == update.Width - 1 || row == 0 || row == update.Height - 1) {
+                    rowString += "o";
+                    return "continue";
+                }
                 if (update.Points.any(function (p) { return p.X == col && p.Y == row; }))
-                    rowString += "$";
+                    rowString += "#";
                 else
                     rowString += " ";
             };

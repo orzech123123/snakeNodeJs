@@ -58,8 +58,13 @@ class Client {
         for (let row = 0; row < update.Height; row++) {
             var rowString = "";
             for (let col = 0; col < update.Width; col++) {
+                if (col == 0 || col == update.Width - 1 || row == 0 || row == update.Height - 1) {
+                    rowString += "o";
+                    continue;
+                }
+
                 if (update.Points.any(p => p.X == col && p.Y == row))
-                    rowString += "$";
+                    rowString += "#";
                 else
                     rowString += " ";
             }

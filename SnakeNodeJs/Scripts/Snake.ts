@@ -16,7 +16,7 @@ export class Snake implements IDrawable, IUpdatable {
     private lastUpdateAck: number;
     private direction : enums.MoveDirection;
     private socket: SocketIO.Socket;
-    private segments: Array<snakeSegment.SnakeSegment> = [];
+    private head: snakeSegment.SnakeSegment;
     
     constructor(socket: SocketIO.Socket, width: number, height: number) {
         this.socket = socket;
@@ -26,7 +26,16 @@ export class Snake implements IDrawable, IUpdatable {
 
         var segment = new snakeSegment.SnakeSegment();
         segment.Random(width, height);
-        this.segments.push(segment);
+        var next = new snakeSegment.SnakeSegment(segment.GetCoordinations()[0]);
+        segment.Next = next;
+        var next2 = new snakeSegment.SnakeSegment(next.GetCoordinations()[0]);
+        next.Next = next2;
+        var next3 = new snakeSegment.SnakeSegment(next2.GetCoordinations()[0]);
+        next2.Next = next3;
+        var next4 = new snakeSegment.SnakeSegment(next3.GetCoordinations()[0]);
+        next3.Next = next4;
+
+        this.head = segment;
         this.direction = enums.MoveDirection.Right;
     }
 
@@ -43,9 +52,7 @@ export class Snake implements IDrawable, IUpdatable {
     }
 
     private move() {
-        for (let segment of this.segments) {
-            segment.MoveDirection(this.direction); //TODO ruszanie calej struktury lista 1-kier
-        }
+        this.head.MoveDirection(this.direction);
     }
     
     private setOnUpdateAck(): void {
@@ -71,9 +78,14 @@ export class Snake implements IDrawable, IUpdatable {
         this.direction = direction;
         console.log(this.socket.id + "DIR:: " + direction);
     }
-
-
+    
     public GetCoordinations(): messages.Point[] {
-        return this.segments.selectMany(s => s.GetCoordinations());
+        var result = new Array<messages.Point>();
+        var segment = this.head;
+        while (segment != null) {
+            result.push(segment.GetCoordinations()[0]);
+            segment = segment.Next;
+        }
+        return result;
     }
 }

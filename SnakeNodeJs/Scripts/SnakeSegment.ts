@@ -9,11 +9,16 @@ import IDrawable = interfaces.IDrawable;
 
 export class SnakeSegment implements IDrawable {
     private x : number;
-    private y : number;
+    private y: number;
+    public Next : SnakeSegment;
 
-    constructor(segment?: SnakeSegment) {
-        if(segment != null)
-            this.MoveSegment(segment);
+    constructor(point?: messages.Point) {
+        if (point != null) {
+            this.x = point.X;
+            this.y = point.Y;
+        }
+//        if(segment != null)
+//            this.MoveSegment(segment);
     }
 
     public Random(width : number, height : number) {
@@ -22,11 +27,17 @@ export class SnakeSegment implements IDrawable {
     }
 
     public MoveSegment(segment: SnakeSegment) {
-        this.x = segment.GetX();
-        this.y = segment.GetY();
+        if (this.Next != null)
+            this.Next.MoveSegment(this);
+
+        this.x = segment.GetCoordinations()[0].X;
+        this.y = segment.GetCoordinations()[0].Y;
     }
 
-    public MoveDirection(direction : enums.MoveDirection) {
+    public MoveDirection(direction: enums.MoveDirection) {
+        if (this.Next != null)
+            this.Next.MoveSegment(this);
+
         if (direction === enums.MoveDirection.Up)
             this.y--;
         if (direction === enums.MoveDirection.Down)
@@ -36,11 +47,7 @@ export class SnakeSegment implements IDrawable {
         if (direction === enums.MoveDirection.Right)
             this.x++;
     }
-
-    GetX(): number { return this.x; }
-
-    GetY(): number { throw this.y; }
-
+    
     private randomIntInc(low : number, high : number) {
         return Math.floor(Math.random() * (high - low + 1) + low);
     }

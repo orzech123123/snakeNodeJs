@@ -5,13 +5,20 @@ var enums = require("../../Data/Enums");
 var snakeSegment = require("./SnakeSegment");
 var Snake = (function () {
     function Snake(socket, width, height) {
-        this.segments = [];
         this.socket = socket;
         this.setOnUpdateAck();
         this.setOnChangeDirection();
         var segment = new snakeSegment.SnakeSegment();
         segment.Random(width, height);
-        this.segments.push(segment);
+        var next = new snakeSegment.SnakeSegment(segment.GetCoordinations()[0]);
+        segment.Next = next;
+        var next2 = new snakeSegment.SnakeSegment(next.GetCoordinations()[0]);
+        next.Next = next2;
+        var next3 = new snakeSegment.SnakeSegment(next2.GetCoordinations()[0]);
+        next2.Next = next3;
+        var next4 = new snakeSegment.SnakeSegment(next3.GetCoordinations()[0]);
+        next3.Next = next4;
+        this.head = segment;
         this.direction = enums.MoveDirection.Right;
     }
     Snake.prototype.SendUpdate = function (update) {
@@ -24,10 +31,7 @@ var Snake = (function () {
         return this.socket;
     };
     Snake.prototype.move = function () {
-        for (var _i = 0, _a = this.segments; _i < _a.length; _i++) {
-            var segment = _a[_i];
-            segment.MoveDirection(this.direction);
-        }
+        this.head.MoveDirection(this.direction);
     };
     Snake.prototype.setOnUpdateAck = function () {
         var _this = this;
@@ -53,7 +57,13 @@ var Snake = (function () {
         console.log(this.socket.id + "DIR:: " + direction);
     };
     Snake.prototype.GetCoordinations = function () {
-        return this.segments.selectMany(function (s) { return s.GetCoordinations(); });
+        var result = new Array();
+        var segment = this.head;
+        while (segment != null) {
+            result.push(segment.GetCoordinations()[0]);
+            segment = segment.Next;
+        }
+        return result;
     };
     return Snake;
 }());

@@ -74,7 +74,7 @@ class Server {
     private setLoop(): void {
         setInterval(() => {
             this.update();
-        }, 1000);
+        }, 100);
     }
 }
 
