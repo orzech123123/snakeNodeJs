@@ -29,7 +29,7 @@ var SnakeSegment = (function () {
     SnakeSegment.prototype.randomIntInc = function (low, high) {
         return Math.floor(Math.random() * (high - low + 1) + low);
     };
-    SnakeSegment.prototype.GetCoordination = function () { return new messages.Point(this.x, this.y); };
+    SnakeSegment.prototype.GetCoordinations = function () { return [new messages.Point(this.x, this.y)]; };
     return SnakeSegment;
 }());
 exports.SnakeSegment = SnakeSegment;

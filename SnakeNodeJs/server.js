@@ -1,6 +1,6 @@
 "use strict";
+require("./node_modules/linq-to-type/src/linq-to-type.js");
 var http = require("http");
-var TS_1 = require("./node_modules/typescript-linq/TS");
 var express = require("express");
 var socketio = require("socket.io");
 var messages = require("../Data/Messages");
@@ -40,17 +40,12 @@ var Server = (function () {
             snake_1.Update();
         }
         var update = new messages.Update();
-        var tmp = new TS_1.TS.Collections.List(true);
-        for (var _b = 0, _c = this.snakes; _b < _c.length; _b++) {
-            var snake_2 = _c[_b];
-            tmp.add(snake_2.GetCoordinations()[0]);
-        }
-        update.Points = tmp.toArray();
+        update.Points = this.snakes.selectMany(function (s) { return s.GetCoordinations(); });
         update.Width = this.width;
         update.Height = this.height;
-        for (var _d = 0, _e = this.snakes; _d < _e.length; _d++) {
-            var snake_3 = _e[_d];
-            snake_3.SendUpdate(update);
+        for (var _b = 0, _c = this.snakes; _b < _c.length; _b++) {
+            var snake_2 = _c[_b];
+            snake_2.SendUpdate(update);
         }
     };
     Server.prototype.setLoop = function () {

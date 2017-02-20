@@ -1,15 +1,18 @@
 ﻿/// <reference path="./Interfaces.ts"/>
 /// <reference path="../node_modules/retyped-socket.io-tsd-ambient/socket.io.d.ts"/>
+/// <reference path="../node_modules/linq-to-type/src/lib.es6.d.ts"/>
+
+require("../node_modules/linq-to-type/src/linq-to-type.js");
 import * as messageTypes from "../../Data/MessageTypes";
 import * as messages from "../../Data/Messages";
 import * as enums from "../../Data/Enums";
 
 import * as interfaces from "./Interfaces"
 import * as snakeSegment from "./SnakeSegment"
-import ICoordinationColletion = interfaces.ICoordinationColletion;
+import IDrawable = interfaces.IDrawable;
 import IUpdatable = interfaces.IUpdatable;
 
-export class Snake implements ICoordinationColletion, IUpdatable {
+export class Snake implements IDrawable, IUpdatable {
     private lastUpdateAck: number;
     private direction : enums.MoveDirection;
     private socket: SocketIO.Socket;
@@ -60,12 +63,6 @@ export class Snake implements ICoordinationColletion, IUpdatable {
     }
     
     public GetCoordinations(): messages.Point[] {
-        let result = new Array<messages.Point>();
-
-        for (var segment of this.segments) {
-            result.push(segment.GetCoordination());
-        }
-
-        return result;
+        return this.segments.selectMany(s => s.GetCoordinations());
     }
 }

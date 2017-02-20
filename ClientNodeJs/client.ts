@@ -3,7 +3,9 @@
 /// <reference path="../Data/Messages.ts"/>
 /// <reference path="../Data/MessageTypes.ts"/>
 /// <reference path="../Data/Enums.ts"/>
+/// <reference path="./node_modules/linq-to-type/src/lib.es6.d.ts"/>
 
+require("./node_modules/linq-to-type/src/linq-to-type.js");
 import * as messages from "../Data/Messages";
 import * as messageTypes from "../Data/MessageTypes";
 import * as enums from "../Data/Enums";
@@ -12,7 +14,6 @@ import * as colors from "chalk";
 import * as socketio from "socket.io-client";
 import * as boardx from "./BoardHelper";
 import BoardHelper = boardx.BoardHelper;
-import { TS } from "./node_modules/typescript-linq/TS";
 
 class Client {
     private socket: SocketIOClient.Socket;
@@ -46,38 +47,27 @@ class Client {
 
     private setOnUpdate(): void {
         this.socket.on(messageTypes.MessageTypes.Update, (update: messages.Update) => {
-            console.log('\x1Bc');
-            //BoardHelper.DrawBoard(board);
-            //console.log(update.Points.length + " ::: " + colors.red(this.socket.id) + " ::: " + colors.blue(Date.now()));
-
-            var points = new TS.Collections.List<messages.Point>(true);
-            points.add(update.Points);
-
-            for (let row = 0; row < update.Height; row++) {
-                var rowString = "";
-                for (let col = 0; col < update.Width; col++) {
-//                    if (points.any(p => p.X === col && p.Y === row))
-//                        rowString += "#";
-//                    else
-//                        rowString += " ";
-                    let found = false;
-                    for (let p of update.Points) {
-                        if (p.X === row && p.Y === col) {
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (found)
-                        rowString += "#";
-                    else
-                        rowString += ".";
-                }
-
-                console.log(rowString);
-            }
-
+            this.redraw(update);
             this.socket.emit(messageTypes.MessageTypes.UpdateAck, 1);
         });
+    }
+
+    private redraw(update: messages.Update)
+    {
+        console.log('\x1Bc');
+        for (let row = 0; row < update.Height; row++) {
+            var rowString = "";
+            for (let col = 0; col < update.Width; col++) {
+                if (update.Points.any(p => p.X == col && p.Y == row))
+                    rowString += "$";
+                else
+                    rowString += " ";
+            }
+
+            console.log(rowString);
+        }
+
+        this.socket.emit(messageTypes.MessageTypes.UpdateAck, 1);
     }
 }
 

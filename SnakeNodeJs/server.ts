@@ -3,9 +3,10 @@
 /// <reference path="./node_modules/retyped-socket.io-tsd-ambient/socket.io.d.ts"/>
 /// <reference path="../Data/Messages.ts"/>
 /// <reference path="../Data/MessageTypes.ts"/>
+/// <reference path="./node_modules/linq-to-type/src/lib.es6.d.ts"/>
 
+require("./node_modules/linq-to-type/src/linq-to-type.js");
 import * as http from "http";
-import { TS } from "./node_modules/typescript-linq/TS";
 import * as express from "express";
 import * as socketio from "socket.io";
 import * as messages from "../Data/Messages";
@@ -60,16 +61,10 @@ class Server {
         //TODO logic
         
         var update = new messages.Update();
-
-        //-----------
-        var tmp = new TS.Collections.List<messages.Point>(true);
-        for (let snake of this.snakes) {
-            tmp.add(snake.GetCoordinations()[0]); //TODO
-        }
-        update.Points = tmp.toArray();
+        
+        update.Points = <any>this.snakes.selectMany(s => s.GetCoordinations());
         update.Width = this.width;
         update.Height = this.height;
-        //-----------
 
         for (let snake of this.snakes) {
             snake.SendUpdate(update);

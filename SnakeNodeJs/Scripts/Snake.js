@@ -1,4 +1,5 @@
 "use strict";
+require("../node_modules/linq-to-type/src/linq-to-type.js");
 var messageTypes = require("../../Data/MessageTypes");
 var enums = require("../../Data/Enums");
 var snakeSegment = require("./SnakeSegment");
@@ -42,12 +43,7 @@ var Snake = (function () {
         });
     };
     Snake.prototype.GetCoordinations = function () {
-        var result = new Array();
-        for (var _i = 0, _a = this.segments; _i < _a.length; _i++) {
-            var segment = _a[_i];
-            result.push(segment.GetCoordination());
-        }
-        return result;
+        return this.segments.selectMany(function (s) { return s.GetCoordinations(); });
     };
     return Snake;
 }());

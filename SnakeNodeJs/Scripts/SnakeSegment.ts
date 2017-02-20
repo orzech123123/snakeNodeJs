@@ -5,10 +5,9 @@ import * as messages from "../../Data/Messages";
 import * as enums from "../../Data/Enums";
 
 import * as interfaces from "./Interfaces"
-import ICoordination = interfaces.ICoordination;
-import IUpdatable = interfaces.IUpdatable;
+import IDrawable = interfaces.IDrawable;
 
-export class SnakeSegment implements ICoordination {
+export class SnakeSegment implements IDrawable {
     private x : number;
     private y : number;
 
@@ -45,6 +44,6 @@ export class SnakeSegment implements ICoordination {
     private randomIntInc(low : number, high : number) {
         return Math.floor(Math.random() * (high - low + 1) + low);
     }
-
-    GetCoordination(): messages.Point { return new messages.Point(this.x, this.y); }
+    
+    GetCoordinations(): Array<messages.Point> { return [new messages.Point(this.x, this.y)]; }
 }

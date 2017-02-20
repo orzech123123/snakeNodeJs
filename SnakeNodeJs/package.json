@@ -8,9 +8,9 @@
   },
   "dependencies": {
     "express": "^4.14.1",
+    "linq-to-type": "^1.0.10",
     "retyped-express-tsd-ambient": "0.0.0-0",
     "retyped-socket.io-tsd-ambient": "^1.4.4-0",
-    "socket.io": "^1.7.2",
-    "typescript-linq": "^1.0.6"
+    "socket.io": "^1.7.2"
   }
 }

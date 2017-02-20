@@ -9,7 +9,7 @@ export class Point {
     public Y : number;
 
     constructor(x : number, y : number) {
-        this.X = y;
-        this.Y = x;
+        this.X = x;
+        this.Y = y;
     }
 }

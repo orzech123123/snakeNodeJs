@@ -1,10 +1,6 @@
 ﻿import * as messages from "../../Data/Messages";
 
-export interface ICoordination {
-    GetCoordination(): messages.Point;
-}
-
-export interface ICoordinationColletion {
+export interface IDrawable {
     GetCoordinations(): Array<messages.Point>;
 }
 
