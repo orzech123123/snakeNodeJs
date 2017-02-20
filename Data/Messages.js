@@ -8,8 +8,8 @@ var Update = (function () {
 exports.Update = Update;
 var Point = (function () {
     function Point(x, y) {
-        this.y = y;
-        this.x = x;
+        this.X = y;
+        this.Y = x;
     }
     return Point;
 }());

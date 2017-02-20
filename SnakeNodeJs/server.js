@@ -43,9 +43,11 @@ var Server = (function () {
         var tmp = new TS_1.TS.Collections.List(true);
         for (var _b = 0, _c = this.snakes; _b < _c.length; _b++) {
             var snake_2 = _c[_b];
-            tmp.add(snake_2.GetCoordinations());
+            tmp.add(snake_2.GetCoordinations()[0]);
         }
         update.Points = tmp.toArray();
+        update.Width = this.width;
+        update.Height = this.height;
         for (var _d = 0, _e = this.snakes; _d < _e.length; _d++) {
             var snake_3 = _e[_d];
             snake_3.SendUpdate(update);

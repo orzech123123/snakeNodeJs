@@ -24,6 +24,7 @@ export class Snake implements ICoordinationColletion, IUpdatable {
         var segment = new snakeSegment.SnakeSegment();
         segment.Random(width, height);
         this.segments.push(segment);
+        this.direction = enums.MoveDirection.Right;
     }
 
     public SendUpdate(update: messages.Update) {
@@ -39,8 +40,8 @@ export class Snake implements ICoordinationColletion, IUpdatable {
     }
 
     private move() {
-        for (var segment of this.segments) {
-            
+        for (let segment of this.segments) {
+            segment.MoveDirection(this.direction); //TODO ruszanie calej struktury lista 1-kier
         }
     }
     

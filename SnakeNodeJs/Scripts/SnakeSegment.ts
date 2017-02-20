@@ -14,7 +14,7 @@ export class SnakeSegment implements ICoordination {
 
     constructor(segment?: SnakeSegment) {
         if(segment != null)
-            this.Move(segment);
+            this.MoveSegment(segment);
     }
 
     public Random(width : number, height : number) {
@@ -22,9 +22,20 @@ export class SnakeSegment implements ICoordination {
         this.y = this.randomIntInc(0, height - 1);
     }
 
-    public Move(segment: SnakeSegment) {
+    public MoveSegment(segment: SnakeSegment) {
         this.x = segment.GetX();
         this.y = segment.GetY();
+    }
+
+    public MoveDirection(direction : enums.MoveDirection) {
+        if (direction === enums.MoveDirection.Up)
+            this.y--;
+        if (direction === enums.MoveDirection.Down)
+            this.y++;
+        if (direction === enums.MoveDirection.Left)
+            this.x--;
+        if (direction === enums.MoveDirection.Right)
+            this.x++;
     }
 
     GetX(): number { return this.x; }

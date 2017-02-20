@@ -1,16 +1,15 @@
 ﻿export class Update {
+    public Width : number;
+    public Height : number;
     public Points : Array<Point> = [];
 }
 
 export class Point {
-    private x : number;
-    private y : number;
+    public X : number;
+    public Y : number;
 
     constructor(x : number, y : number) {
-        this.y = y;
-        this.x = x;
+        this.X = y;
+        this.Y = x;
     }
-
-    public X: number;
-    public Y: number;
 }

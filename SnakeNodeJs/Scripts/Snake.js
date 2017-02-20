@@ -1,5 +1,6 @@
 "use strict";
 var messageTypes = require("../../Data/MessageTypes");
+var enums = require("../../Data/Enums");
 var snakeSegment = require("./SnakeSegment");
 var Snake = (function () {
     function Snake(socket, width, height) {
@@ -10,6 +11,7 @@ var Snake = (function () {
         var segment = new snakeSegment.SnakeSegment();
         segment.Random(width, height);
         this.segments.push(segment);
+        this.direction = enums.MoveDirection.Right;
     }
     Snake.prototype.SendUpdate = function (update) {
         this.socket.emit(messageTypes.MessageTypes.Update, update);
@@ -23,6 +25,7 @@ var Snake = (function () {
     Snake.prototype.move = function () {
         for (var _i = 0, _a = this.segments; _i < _a.length; _i++) {
             var segment = _a[_i];
+            segment.MoveDirection(this.direction);
         }
     };
     Snake.prototype.setOnUpdateAck = function () {

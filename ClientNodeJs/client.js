@@ -1,8 +1,8 @@
 "use strict";
 var messageTypes = require("../Data/MessageTypes");
 var enums = require("../Data/Enums");
-var colors = require("chalk");
 var socketio = require("socket.io-client");
+var TS_1 = require("./node_modules/typescript-linq/TS");
 var Client = (function () {
     function Client() {
     }
@@ -29,7 +29,27 @@ var Client = (function () {
     Client.prototype.setOnUpdate = function () {
         var _this = this;
         this.socket.on(messageTypes.MessageTypes.Update, function (update) {
-            console.log(update.Points.length + " ::: " + colors.red(_this.socket.id) + " ::: " + colors.blue(Date.now()));
+            console.log('\x1Bc');
+            var points = new TS_1.TS.Collections.List(true);
+            points.add(update.Points);
+            for (var row = 0; row < update.Height; row++) {
+                var rowString = "";
+                for (var col = 0; col < update.Width; col++) {
+                    var found = false;
+                    for (var _i = 0, _a = update.Points; _i < _a.length; _i++) {
+                        var p = _a[_i];
+                        if (p.X === row && p.Y === col) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found)
+                        rowString += "#";
+                    else
+                        rowString += ".";
+                }
+                console.log(rowString);
+            }
             _this.socket.emit(messageTypes.MessageTypes.UpdateAck, 1);
         });
     };

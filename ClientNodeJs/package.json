@@ -11,6 +11,7 @@
     "moment": "^2.17.1",
     "retyped-moment-tsd-ambient": "^2.8.0-0",
     "retyped-socket.io-client-tsd-ambient": "^1.4.4-0",
-    "socket.io-client": "^1.7.2"
+    "socket.io-client": "^1.7.2",
+    "typescript-linq": "^1.0.6"
   }
 }

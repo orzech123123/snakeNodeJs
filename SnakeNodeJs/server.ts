@@ -64,9 +64,11 @@ class Server {
         //-----------
         var tmp = new TS.Collections.List<messages.Point>(true);
         for (let snake of this.snakes) {
-            tmp.add(snake.GetCoordinations());
+            tmp.add(snake.GetCoordinations()[0]); //TODO
         }
         update.Points = tmp.toArray();
+        update.Width = this.width;
+        update.Height = this.height;
         //-----------
 
         for (let snake of this.snakes) {
