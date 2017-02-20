@@ -38,9 +38,19 @@ var Snake = (function () {
     Snake.prototype.setOnChangeDirection = function () {
         var _this = this;
         this.socket.on(messageTypes.MessageTypes.ChangeDirection, function (direction) {
-            _this.direction = direction;
-            console.log(_this.socket.id + "DIR:: " + direction);
+            if (direction === enums.MoveDirection.Up && (_this.direction === enums.MoveDirection.Left || _this.direction == enums.MoveDirection.Right))
+                _this.setDirection(direction);
+            if (direction === enums.MoveDirection.Down && (_this.direction === enums.MoveDirection.Left || _this.direction == enums.MoveDirection.Right))
+                _this.setDirection(direction);
+            if (direction === enums.MoveDirection.Left && (_this.direction === enums.MoveDirection.Up || _this.direction == enums.MoveDirection.Down))
+                _this.setDirection(direction);
+            if (direction === enums.MoveDirection.Right && (_this.direction === enums.MoveDirection.Up || _this.direction == enums.MoveDirection.Down))
+                _this.setDirection(direction);
         });
+    };
+    Snake.prototype.setDirection = function (direction) {
+        this.direction = direction;
+        console.log(this.socket.id + "DIR:: " + direction);
     };
     Snake.prototype.GetCoordinations = function () {
         return this.segments.selectMany(function (s) { return s.GetCoordinations(); });

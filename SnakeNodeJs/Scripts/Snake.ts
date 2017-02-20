@@ -56,12 +56,23 @@ export class Snake implements IDrawable, IUpdatable {
 
     private setOnChangeDirection(): void {
         this.socket.on(messageTypes.MessageTypes.ChangeDirection, (direction : enums.MoveDirection) => {
-            this.direction = direction;
-
-            console.log(this.socket.id + "DIR:: " + direction);
+            if (direction === enums.MoveDirection.Up && (this.direction === enums.MoveDirection.Left || this.direction == enums.MoveDirection.Right))
+                this.setDirection(direction);
+            if (direction === enums.MoveDirection.Down && (this.direction === enums.MoveDirection.Left || this.direction == enums.MoveDirection.Right))
+                this.setDirection(direction);
+            if (direction === enums.MoveDirection.Left && (this.direction === enums.MoveDirection.Up || this.direction == enums.MoveDirection.Down))
+                this.setDirection(direction);
+            if (direction === enums.MoveDirection.Right && (this.direction === enums.MoveDirection.Up || this.direction == enums.MoveDirection.Down))
+                this.setDirection(direction);
         });
     }
     
+    private setDirection(direction: enums.MoveDirection) {
+        this.direction = direction;
+        console.log(this.socket.id + "DIR:: " + direction);
+    }
+
+
     public GetCoordinations(): messages.Point[] {
         return this.segments.selectMany(s => s.GetCoordinations());
     }

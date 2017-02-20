@@ -718,3 +718,15 @@ D:\p\SnakeNodeJs\ClientNodeJs\client.js
 D:\p\SnakeNodeJs\ClientNodeJs\client.js.map
 D:\p\SnakeNodeJs\Data\app.js
 D:\p\SnakeNodeJs\Data\app.js.map
+D:\p\SnakeNodeJs\Data\Messages.js
+D:\p\SnakeNodeJs\Data\Messages.js.map
+D:\p\SnakeNodeJs\ClientNodeJs\BoardHelper.js
+D:\p\SnakeNodeJs\ClientNodeJs\BoardHelper.js.map
+D:\p\SnakeNodeJs\Data\MessageTypes.js
+D:\p\SnakeNodeJs\Data\MessageTypes.js.map
+D:\p\SnakeNodeJs\Data\Enums.js
+D:\p\SnakeNodeJs\Data\Enums.js.map
+D:\p\SnakeNodeJs\ClientNodeJs\client.js
+D:\p\SnakeNodeJs\ClientNodeJs\client.js.map
+D:\p\SnakeNodeJs\Data\app.js
+D:\p\SnakeNodeJs\Data\app.js.map
