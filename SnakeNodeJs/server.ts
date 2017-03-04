@@ -62,7 +62,7 @@ class Server {
         
         var update = new messages.Update();
         
-        update.Points = <any>this.snakes.selectMany(s => s.GetCoordinations());
+        update.Snakes = this.snakes.select(s => new messages.SnakeDto(s.GetCoordinations(), s.GetId()));
         update.Width = this.width;
         update.Height = this.height;
 

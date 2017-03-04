@@ -40,7 +40,7 @@ var Server = (function () {
             snake_1.Update();
         }
         var update = new messages.Update();
-        update.Points = this.snakes.selectMany(function (s) { return s.GetCoordinations(); });
+        update.Snakes = this.snakes.select(function (s) { return new messages.SnakeDto(s.GetCoordinations(), s.GetId()); });
         update.Width = this.width;
         update.Height = this.height;
         for (var _b = 0, _c = this.snakes; _b < _c.length; _b++) {

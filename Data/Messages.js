@@ -1,11 +1,19 @@
 "use strict";
 var Update = (function () {
     function Update() {
-        this.Points = [];
+        this.Snakes = [];
     }
     return Update;
 }());
 exports.Update = Update;
+var SnakeDto = (function () {
+    function SnakeDto(points, id) {
+        this.Points = points;
+        this.Id = id;
+    }
+    return SnakeDto;
+}());
+exports.SnakeDto = SnakeDto;
 var Point = (function () {
     function Point(x, y) {
         this.X = x;

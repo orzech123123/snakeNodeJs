@@ -24,6 +24,9 @@ var Snake = (function () {
     Snake.prototype.SendUpdate = function (update) {
         this.socket.emit(messageTypes.MessageTypes.Update, update);
     };
+    Snake.prototype.GetId = function () {
+        return this.socket.id;
+    };
     Snake.prototype.Update = function () {
         this.move();
     };

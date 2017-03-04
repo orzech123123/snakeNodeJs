@@ -12,8 +12,6 @@ import * as enums from "../Data/Enums";
 import * as moment from "moment";
 import * as colors from "chalk";
 import * as socketio from "socket.io-client";
-import * as boardx from "./BoardHelper";
-import BoardHelper = boardx.BoardHelper;
 
 class Client {
     private socket: SocketIOClient.Socket;
@@ -52,27 +50,47 @@ class Client {
         });
     }
 
-    private redraw(update: messages.Update)
-    {
+    private clearConsole(): void {
         console.log('\x1Bc');
+    }
+
+    private drawUpdate(update : messages.Update): void {
         for (let row = 0; row < update.Height; row++) {
             var rowString = "";
             for (let col = 0; col < update.Width; col++) {
                 if (col == 0 || col == update.Width - 1 || row == 0 || row == update.Height - 1) {
-                    rowString += "o";
+                    rowString += colors.blue("o");
                     continue;
                 }
 
-                if (update.Points.any(p => p.X == col && p.Y == row))
-                    rowString += "#";
+                var id = this.socket.id;
+
+                var isMine = update.Snakes
+                    .where(s => s.Id == id)
+                    .selectMany(s => s.Points)
+                    .any((p: any) => p.X == col && p.Y == row);
+
+                var isOther = update.Snakes
+                    .where(s => s.Id != id)
+                    .selectMany(s => s.Points)
+                    .any((p: any) => p.X == col && p.Y == row);
+
+                if (isMine)
+                    rowString += colors.red("#");
+                else if (isOther)
+                    rowString += colors.yellow("#");
                 else
                     rowString += " ";
             }
 
             console.log(rowString);
         }
+    }
 
-        this.socket.emit(messageTypes.MessageTypes.UpdateAck, 1);
+    private redraw(update: messages.Update)
+    {
+        this.clearConsole();
+        this.drawUpdate(update);
     }
 }
 
@@ -85,3 +103,24 @@ process.stdin.setEncoding("utf8");
 process.stdin.on("data", (key: any) => {
     client.KeyPress(key);
 });
+
+setTimeout(() => {
+    var x = 1;
+    setInterval(() => {
+            if (x == 1)
+                client.KeyPress("s");
+            else if (x == 2)
+                client.KeyPress("a");
+            else if (x == 3)
+                client.KeyPress("w");
+            else if (x == 4)
+                client.KeyPress("d");
+
+            x++;
+
+            if (x == 5)
+                x = 1;
+        },
+        500);
+    },
+    3000);

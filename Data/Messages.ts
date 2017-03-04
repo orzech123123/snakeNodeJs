@@ -1,7 +1,18 @@
 ﻿export class Update {
     public Width : number;
     public Height : number;
-    public Points : Array<Point> = [];
+    public Snakes: Array<SnakeDto> = [];
+}
+
+export class SnakeDto
+{
+    constructor(points: Array<Point>, id: string) {
+        this.Points = points;
+        this.Id = id;
+    }
+
+    public Points: Array<Point>;
+    public Id : string;
 }
 
 export class Point {

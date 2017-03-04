@@ -2,6 +2,7 @@
 require("./node_modules/linq-to-type/src/linq-to-type.js");
 var messageTypes = require("../Data/MessageTypes");
 var enums = require("../Data/Enums");
+var colors = require("chalk");
 var socketio = require("socket.io-client");
 var Client = (function () {
     function Client() {
@@ -33,17 +34,30 @@ var Client = (function () {
             _this.socket.emit(messageTypes.MessageTypes.UpdateAck, 1);
         });
     };
-    Client.prototype.redraw = function (update) {
+    Client.prototype.clearConsole = function () {
         console.log('\x1Bc');
+    };
+    Client.prototype.drawUpdate = function (update) {
         var _loop_1 = function (row) {
             rowString = "";
             var _loop_2 = function (col) {
                 if (col == 0 || col == update.Width - 1 || row == 0 || row == update.Height - 1) {
-                    rowString += "o";
+                    rowString += colors.blue("o");
                     return "continue";
                 }
-                if (update.Points.any(function (p) { return p.X == col && p.Y == row; }))
-                    rowString += "#";
+                id = this_1.socket.id;
+                isMine = update.Snakes
+                    .where(function (s) { return s.Id == id; })
+                    .selectMany(function (s) { return s.Points; })
+                    .any(function (p) { return p.X == col && p.Y == row; });
+                isOther = update.Snakes
+                    .where(function (s) { return s.Id != id; })
+                    .selectMany(function (s) { return s.Points; })
+                    .any(function (p) { return p.X == col && p.Y == row; });
+                if (isMine)
+                    rowString += colors.red("#");
+                else if (isOther)
+                    rowString += colors.yellow("#");
                 else
                     rowString += " ";
             };
@@ -52,11 +66,14 @@ var Client = (function () {
             }
             console.log(rowString);
         };
-        var rowString;
+        var this_1 = this, rowString, id, isMine, isOther;
         for (var row = 0; row < update.Height; row++) {
             _loop_1(row);
         }
-        this.socket.emit(messageTypes.MessageTypes.UpdateAck, 1);
+    };
+    Client.prototype.redraw = function (update) {
+        this.clearConsole();
+        this.drawUpdate(update);
     };
     return Client;
 }());
@@ -68,4 +85,20 @@ process.stdin.setEncoding("utf8");
 process.stdin.on("data", function (key) {
     client.KeyPress(key);
 });
+setTimeout(function () {
+    var x = 1;
+    setInterval(function () {
+        if (x == 1)
+            client.KeyPress("s");
+        else if (x == 2)
+            client.KeyPress("a");
+        else if (x == 3)
+            client.KeyPress("w");
+        else if (x == 4)
+            client.KeyPress("d");
+        x++;
+        if (x == 5)
+            x = 1;
+    }, 500);
+}, 3000);
 //# sourceMappingURL=client.js.map

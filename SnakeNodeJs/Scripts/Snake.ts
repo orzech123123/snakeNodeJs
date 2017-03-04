@@ -43,6 +43,10 @@ export class Snake implements IDrawable, IUpdatable {
         this.socket.emit(messageTypes.MessageTypes.Update, update);
     }
 
+    public GetId() {
+        return this.socket.id;
+    }
+
     public Update() {
         this.move();
     }

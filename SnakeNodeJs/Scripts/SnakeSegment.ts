@@ -17,8 +17,6 @@ export class SnakeSegment implements IDrawable {
             this.x = point.X;
             this.y = point.Y;
         }
-//        if(segment != null)
-//            this.MoveSegment(segment);
     }
 
     public Random(width : number, height : number) {
