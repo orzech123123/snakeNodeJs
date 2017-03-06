@@ -65,6 +65,8 @@ class Client {
 
                 var id = this.socket.id;
 
+                var isCookie = update.Cookies.any(p => p.X == col && p.Y == row);
+
                 var isMine = update.Snakes
                     .where(s => s.Id == id)
                     .selectMany(s => s.Points)
@@ -75,7 +77,9 @@ class Client {
                     .selectMany(s => s.Points)
                     .any((p: any) => p.X == col && p.Y == row);
 
-                if (isMine)
+                if (isCookie)
+                    rowString += colors.green("x");
+                else if (isMine)
                     rowString += colors.red("#");
                 else if (isOther)
                     rowString += colors.yellow("#");
@@ -105,6 +109,7 @@ process.stdin.on("data", (key: any) => {
 });
 
 setTimeout(() => {
+        return;
     var x = 1;
     setInterval(() => {
             if (x == 1)

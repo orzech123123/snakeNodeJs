@@ -6,6 +6,7 @@ require("../node_modules/linq-to-type/src/linq-to-type.js");
 import * as messageTypes from "../../Data/MessageTypes";
 import * as messages from "../../Data/Messages";
 import * as enums from "../../Data/Enums";
+import * as mh from "./MathHelper";
 
 import * as interfaces from "./Interfaces"
 import * as snakeSegment from "./SnakeSegment"
@@ -16,27 +17,28 @@ export class Snake implements IDrawable, IUpdatable {
     private lastUpdateAck: number;
     private direction : enums.MoveDirection;
     private socket: SocketIO.Socket;
-    private head: snakeSegment.SnakeSegment;
+    public Head: snakeSegment.SnakeSegment;
     
-    constructor(socket: SocketIO.Socket, width: number, height: number) {
+    constructor(socket: SocketIO.Socket, private width: number, private height: number) {
         this.socket = socket;
 
         this.setOnUpdateAck();
         this.setOnChangeDirection();
 
-        var segment = new snakeSegment.SnakeSegment();
-        segment.Random(width, height);
-        var next = new snakeSegment.SnakeSegment(segment.GetCoordinations()[0]);
-        segment.Next = next;
-        var next2 = new snakeSegment.SnakeSegment(next.GetCoordinations()[0]);
-        next.Next = next2;
-        var next3 = new snakeSegment.SnakeSegment(next2.GetCoordinations()[0]);
-        next2.Next = next3;
-        var next4 = new snakeSegment.SnakeSegment(next3.GetCoordinations()[0]);
-        next3.Next = next4;
+        this.Recreate();
+    }
+    
+    public AddSegment(x: number, y: number) {
+        var newHead = new snakeSegment.SnakeSegment(new messages.Point(x, y));
+        newHead.Next = this.Head;
+        this.Head = newHead;
+    }
 
-        this.head = segment;
-        this.direction = enums.MoveDirection.Right;
+    public Recreate() {
+        var segment = new snakeSegment.SnakeSegment();
+        segment.Random(this.width, this.height);
+        this.Head = segment;
+        this.direction = mh.MathHelper.RandomIntInc(1, 4);
     }
 
     public SendUpdate(update: messages.Update) {
@@ -56,7 +58,7 @@ export class Snake implements IDrawable, IUpdatable {
     }
 
     private move() {
-        this.head.MoveDirection(this.direction);
+        this.Head.MoveDirection(this.direction);
     }
     
     private setOnUpdateAck(): void {
@@ -85,7 +87,7 @@ export class Snake implements IDrawable, IUpdatable {
     
     public GetCoordinations(): messages.Point[] {
         var result = new Array<messages.Point>();
-        var segment = this.head;
+        var segment = this.Head;
         while (segment != null) {
             result.push(segment.GetCoordinations()[0]);
             segment = segment.Next;

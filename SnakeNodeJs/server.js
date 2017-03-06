@@ -5,6 +5,7 @@ var express = require("express");
 var socketio = require("socket.io");
 var messages = require("../Data/Messages");
 var messageTypes = require("../Data/MessageTypes");
+var mh = require("./Scripts/MathHelper");
 var snake = require("./Scripts/Snake");
 var Snake = snake.Snake;
 var Server = (function () {
@@ -12,6 +13,8 @@ var Server = (function () {
         this.snakes = [];
         this.width = 50;
         this.height = 20;
+        this.xxx = mh.MathHelper.RandomIntInc(1, this.width - 2);
+        this.yyy = mh.MathHelper.RandomIntInc(1, this.height - 2);
     }
     Server.prototype.Start = function () {
         this.application = express();
@@ -35,17 +38,34 @@ var Server = (function () {
         });
     };
     Server.prototype.update = function () {
+        var _this = this;
         for (var _i = 0, _a = this.snakes; _i < _a.length; _i++) {
             var snake_1 = _a[_i];
             snake_1.Update();
+        }
+        for (var _b = 0, _c = this.snakes; _b < _c.length; _b++) {
+            var snake_2 = _c[_b];
+            var head = snake_2.Head.GetCoordinations()[0];
+            if (this.xxx === head.X && this.yyy === head.Y) {
+                snake_2.AddSegment(this.xxx, this.yyy);
+                this.xxx = mh.MathHelper.RandomIntInc(1, this.width - 2);
+                this.yyy = mh.MathHelper.RandomIntInc(1, this.height - 2);
+            }
+        }
+        for (var _d = 0, _e = this.snakes; _d < _e.length; _d++) {
+            var snake_3 = _e[_d];
+            if (snake_3.GetCoordinations().any(function (p) { return p.X == 0 || p.X == _this.width - 1 || p.Y == 0 || p.Y == _this.height - 1; })) {
+                snake_3.Recreate();
+            }
         }
         var update = new messages.Update();
         update.Snakes = this.snakes.select(function (s) { return new messages.SnakeDto(s.GetCoordinations(), s.GetId()); });
         update.Width = this.width;
         update.Height = this.height;
-        for (var _b = 0, _c = this.snakes; _b < _c.length; _b++) {
-            var snake_2 = _c[_b];
-            snake_2.SendUpdate(update);
+        update.Cookies.push(new messages.Point(this.xxx, this.yyy));
+        for (var _f = 0, _g = this.snakes; _f < _g.length; _f++) {
+            var snake_4 = _g[_f];
+            snake_4.SendUpdate(update);
         }
     };
     Server.prototype.setLoop = function () {

@@ -2,6 +2,7 @@
     public Width : number;
     public Height : number;
     public Snakes: Array<SnakeDto> = [];
+    public Cookies: Array<Point> = [];
 }
 
 export class SnakeDto

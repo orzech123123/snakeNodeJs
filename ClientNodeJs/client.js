@@ -46,6 +46,7 @@ var Client = (function () {
                     return "continue";
                 }
                 id = this_1.socket.id;
+                isCookie = update.Cookies.any(function (p) { return p.X == col && p.Y == row; });
                 isMine = update.Snakes
                     .where(function (s) { return s.Id == id; })
                     .selectMany(function (s) { return s.Points; })
@@ -54,7 +55,9 @@ var Client = (function () {
                     .where(function (s) { return s.Id != id; })
                     .selectMany(function (s) { return s.Points; })
                     .any(function (p) { return p.X == col && p.Y == row; });
-                if (isMine)
+                if (isCookie)
+                    rowString += colors.green("x");
+                else if (isMine)
                     rowString += colors.red("#");
                 else if (isOther)
                     rowString += colors.yellow("#");
@@ -66,7 +69,7 @@ var Client = (function () {
             }
             console.log(rowString);
         };
-        var this_1 = this, rowString, id, isMine, isOther;
+        var this_1 = this, rowString, id, isCookie, isMine, isOther;
         for (var row = 0; row < update.Height; row++) {
             _loop_1(row);
         }
@@ -86,6 +89,7 @@ process.stdin.on("data", function (key) {
     client.KeyPress(key);
 });
 setTimeout(function () {
+    return;
     var x = 1;
     setInterval(function () {
         if (x == 1)

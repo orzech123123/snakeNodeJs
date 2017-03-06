@@ -2,6 +2,7 @@
 var Update = (function () {
     function Update() {
         this.Snakes = [];
+        this.Cookies = [];
     }
     return Update;
 }());

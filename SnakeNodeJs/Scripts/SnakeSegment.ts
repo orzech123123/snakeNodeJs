@@ -3,6 +3,7 @@
 import * as messageTypes from "../../Data/MessageTypes";
 import * as messages from "../../Data/Messages";
 import * as enums from "../../Data/Enums";
+import * as mh from "./MathHelper";
 
 import * as interfaces from "./Interfaces"
 import IDrawable = interfaces.IDrawable;
@@ -20,8 +21,8 @@ export class SnakeSegment implements IDrawable {
     }
 
     public Random(width : number, height : number) {
-        this.x = this.randomIntInc(0, width - 1);
-        this.y = this.randomIntInc(0, height - 1);
+        this.x = mh.MathHelper.RandomIntInc(1 , width - 2);
+        this.y = mh.MathHelper.RandomIntInc(1, height - 2);
     }
 
     public MoveSegment(segment: SnakeSegment) {
@@ -44,10 +45,6 @@ export class SnakeSegment implements IDrawable {
             this.x--;
         if (direction === enums.MoveDirection.Right)
             this.x++;
-    }
-    
-    private randomIntInc(low : number, high : number) {
-        return Math.floor(Math.random() * (high - low + 1) + low);
     }
     
     GetCoordinations(): Array<messages.Point> { return [new messages.Point(this.x, this.y)]; }

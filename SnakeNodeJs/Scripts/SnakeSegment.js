@@ -1,6 +1,7 @@
 "use strict";
 var messages = require("../../Data/Messages");
 var enums = require("../../Data/Enums");
+var mh = require("./MathHelper");
 var SnakeSegment = (function () {
     function SnakeSegment(point) {
         if (point != null) {
@@ -9,8 +10,8 @@ var SnakeSegment = (function () {
         }
     }
     SnakeSegment.prototype.Random = function (width, height) {
-        this.x = this.randomIntInc(0, width - 1);
-        this.y = this.randomIntInc(0, height - 1);
+        this.x = mh.MathHelper.RandomIntInc(1, width - 2);
+        this.y = mh.MathHelper.RandomIntInc(1, height - 2);
     };
     SnakeSegment.prototype.MoveSegment = function (segment) {
         if (this.Next != null)
@@ -29,9 +30,6 @@ var SnakeSegment = (function () {
             this.x--;
         if (direction === enums.MoveDirection.Right)
             this.x++;
-    };
-    SnakeSegment.prototype.randomIntInc = function (low, high) {
-        return Math.floor(Math.random() * (high - low + 1) + low);
     };
     SnakeSegment.prototype.GetCoordinations = function () { return [new messages.Point(this.x, this.y)]; };
     return SnakeSegment;

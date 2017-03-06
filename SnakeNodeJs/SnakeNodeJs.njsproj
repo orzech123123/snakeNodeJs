@@ -38,6 +38,7 @@
     <TypeScriptCompile Include="Scripts\Interfaces.ts" />
     <TypeScriptCompile Include="Scripts\SnakeSegment.ts" />
     <TypeScriptCompile Include="Scripts\Snake.ts" />
+    <TypeScriptCompile Include="Scripts\MathHelper.ts" />
     <TypeScriptCompile Include="Scripts\typings\node\node.d.ts" />
     <TypeScriptCompile Include="server.ts" />
     <Content Include="package.json" />

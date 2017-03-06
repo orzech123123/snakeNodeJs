@@ -1,26 +1,30 @@
 "use strict";
 require("../node_modules/linq-to-type/src/linq-to-type.js");
 var messageTypes = require("../../Data/MessageTypes");
+var messages = require("../../Data/Messages");
 var enums = require("../../Data/Enums");
+var mh = require("./MathHelper");
 var snakeSegment = require("./SnakeSegment");
 var Snake = (function () {
     function Snake(socket, width, height) {
+        this.width = width;
+        this.height = height;
         this.socket = socket;
         this.setOnUpdateAck();
         this.setOnChangeDirection();
-        var segment = new snakeSegment.SnakeSegment();
-        segment.Random(width, height);
-        var next = new snakeSegment.SnakeSegment(segment.GetCoordinations()[0]);
-        segment.Next = next;
-        var next2 = new snakeSegment.SnakeSegment(next.GetCoordinations()[0]);
-        next.Next = next2;
-        var next3 = new snakeSegment.SnakeSegment(next2.GetCoordinations()[0]);
-        next2.Next = next3;
-        var next4 = new snakeSegment.SnakeSegment(next3.GetCoordinations()[0]);
-        next3.Next = next4;
-        this.head = segment;
-        this.direction = enums.MoveDirection.Right;
+        this.Recreate();
     }
+    Snake.prototype.AddSegment = function (x, y) {
+        var newHead = new snakeSegment.SnakeSegment(new messages.Point(x, y));
+        newHead.Next = this.Head;
+        this.Head = newHead;
+    };
+    Snake.prototype.Recreate = function () {
+        var segment = new snakeSegment.SnakeSegment();
+        segment.Random(this.width, this.height);
+        this.Head = segment;
+        this.direction = mh.MathHelper.RandomIntInc(1, 4);
+    };
     Snake.prototype.SendUpdate = function (update) {
         this.socket.emit(messageTypes.MessageTypes.Update, update);
     };
@@ -34,7 +38,7 @@ var Snake = (function () {
         return this.socket;
     };
     Snake.prototype.move = function () {
-        this.head.MoveDirection(this.direction);
+        this.Head.MoveDirection(this.direction);
     };
     Snake.prototype.setOnUpdateAck = function () {
         var _this = this;
@@ -61,7 +65,7 @@ var Snake = (function () {
     };
     Snake.prototype.GetCoordinations = function () {
         var result = new Array();
-        var segment = this.head;
+        var segment = this.Head;
         while (segment != null) {
             result.push(segment.GetCoordinations()[0]);
             segment = segment.Next;
