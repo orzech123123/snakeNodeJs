@@ -101,17 +101,24 @@ class Client {
 var client = new Client();
 client.Connect();
 
+var loopMoveEnabled = false;
+
 (<any>process.stdin).setRawMode(true);
 process.stdin.resume();
 process.stdin.setEncoding("utf8");
 process.stdin.on("data", (key: any) => {
+    if (key == "x")
+        loopMoveEnabled = !loopMoveEnabled;
+
     client.KeyPress(key);
 });
 
 setTimeout(() => {
-        return;
     var x = 1;
     setInterval(() => {
+            if (!loopMoveEnabled)
+            return;
+
             if (x == 1)
                 client.KeyPress("s");
             else if (x == 2)

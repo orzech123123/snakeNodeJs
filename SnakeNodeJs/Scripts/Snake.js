@@ -3,27 +3,26 @@ require("../node_modules/linq-to-type/src/linq-to-type.js");
 var messageTypes = require("../../Data/MessageTypes");
 var messages = require("../../Data/Messages");
 var enums = require("../../Data/Enums");
-var mh = require("./MathHelper");
-var snakeSegment = require("./SnakeSegment");
+var h = require("./Helpers");
+var ss = require("./SnakeSegment");
 var Snake = (function () {
     function Snake(socket, width, height) {
         this.width = width;
         this.height = height;
+        this.segmentsToAdd = [];
         this.socket = socket;
         this.setOnUpdateAck();
         this.setOnChangeDirection();
         this.Recreate();
     }
-    Snake.prototype.AddSegment = function (x, y) {
-        var newHead = new snakeSegment.SnakeSegment(new messages.Point(x, y));
-        newHead.Next = this.Head;
-        this.Head = newHead;
+    Snake.prototype.AddSegment = function () {
+        this.segmentsToAdd.push(this.Head.GetCoordinations()[0]);
     };
     Snake.prototype.Recreate = function () {
-        var segment = new snakeSegment.SnakeSegment();
+        var segment = new ss.SnakeSegment();
         segment.Random(this.width, this.height);
         this.Head = segment;
-        this.direction = mh.MathHelper.RandomIntInc(1, 4);
+        this.direction = h.MathHelper.RandomIntInc(1, 4);
     };
     Snake.prototype.SendUpdate = function (update) {
         this.socket.emit(messageTypes.MessageTypes.Update, update);
@@ -33,6 +32,20 @@ var Snake = (function () {
     };
     Snake.prototype.Update = function () {
         this.move();
+        this.tryAddSegment();
+    };
+    Snake.prototype.tryAddSegment = function () {
+        for (var _i = 0, _a = this.segmentsToAdd; _i < _a.length; _i++) {
+            var segment = _a[_i];
+            if (!h.CollisionHelper.CollisionPoints(this.GetCoordinations(), [segment]).any()) {
+                var snakeSegment = this.Head;
+                while (snakeSegment.Next != null)
+                    snakeSegment = snakeSegment.Next;
+                var newSegment = new ss.SnakeSegment(new messages.Point(segment.X, segment.Y));
+                snakeSegment.Next = newSegment;
+                this.segmentsToAdd.splice(this.segmentsToAdd.indexOf(segment), 1);
+            }
+        }
     };
     Snake.prototype.GetSocket = function () {
         return this.socket;

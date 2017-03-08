@@ -82,16 +82,20 @@ var Client = (function () {
 }());
 var client = new Client();
 client.Connect();
+var loopMoveEnabled = false;
 process.stdin.setRawMode(true);
 process.stdin.resume();
 process.stdin.setEncoding("utf8");
 process.stdin.on("data", function (key) {
+    if (key == "x")
+        loopMoveEnabled = !loopMoveEnabled;
     client.KeyPress(key);
 });
 setTimeout(function () {
-    return;
     var x = 1;
     setInterval(function () {
+        if (!loopMoveEnabled)
+            return;
         if (x == 1)
             client.KeyPress("s");
         else if (x == 2)

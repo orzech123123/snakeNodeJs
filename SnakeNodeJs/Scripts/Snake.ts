@@ -6,10 +6,10 @@ require("../node_modules/linq-to-type/src/linq-to-type.js");
 import * as messageTypes from "../../Data/MessageTypes";
 import * as messages from "../../Data/Messages";
 import * as enums from "../../Data/Enums";
-import * as mh from "./MathHelper";
+import * as h from "./Helpers";
 
 import * as interfaces from "./Interfaces"
-import * as snakeSegment from "./SnakeSegment"
+import * as ss from "./SnakeSegment"
 import IDrawable = interfaces.IDrawable;
 import IUpdatable = interfaces.IUpdatable;
 
@@ -17,7 +17,9 @@ export class Snake implements IDrawable, IUpdatable {
     private lastUpdateAck: number;
     private direction : enums.MoveDirection;
     private socket: SocketIO.Socket;
-    public Head: snakeSegment.SnakeSegment;
+    public Head: ss.SnakeSegment;
+
+    private segmentsToAdd: Array<messages.Point> = [];
     
     constructor(socket: SocketIO.Socket, private width: number, private height: number) {
         this.socket = socket;
@@ -28,17 +30,15 @@ export class Snake implements IDrawable, IUpdatable {
         this.Recreate();
     }
     
-    public AddSegment(x: number, y: number) {
-        var newHead = new snakeSegment.SnakeSegment(new messages.Point(x, y));
-        newHead.Next = this.Head;
-        this.Head = newHead;
+    public AddSegment() {
+        this.segmentsToAdd.push(this.Head.GetCoordinations()[0]);
     }
 
     public Recreate() {
-        var segment = new snakeSegment.SnakeSegment();
+        var segment = new ss.SnakeSegment();
         segment.Random(this.width, this.height);
         this.Head = segment;
-        this.direction = mh.MathHelper.RandomIntInc(1, 4);
+        this.direction = h.MathHelper.RandomIntInc(1, 4);
     }
 
     public SendUpdate(update: messages.Update) {
@@ -51,6 +51,22 @@ export class Snake implements IDrawable, IUpdatable {
 
     public Update() {
         this.move();
+        this.tryAddSegment();
+    }
+
+    private tryAddSegment() {
+        for (let segment of this.segmentsToAdd) {
+            if (!h.CollisionHelper.CollisionPoints(this.GetCoordinations(), [segment]).any()) {
+                let snakeSegment = this.Head;
+                while (snakeSegment.Next != null)
+                    snakeSegment = snakeSegment.Next;
+                
+                var newSegment = new ss.SnakeSegment(new messages.Point(segment.X, segment.Y));
+                snakeSegment.Next = newSegment;
+
+                this.segmentsToAdd.splice(this.segmentsToAdd.indexOf(segment), 1);
+            }
+        }
     }
 
     public GetSocket(): SocketIO.Socket {
