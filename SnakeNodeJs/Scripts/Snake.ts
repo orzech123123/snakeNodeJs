@@ -39,6 +39,7 @@ export class Snake implements IDrawable, IUpdatable {
         segment.Random(this.width, this.height);
         this.Head = segment;
         this.direction = h.MathHelper.RandomIntInc(1, 4);
+        this.segmentsToAdd = [];
     }
 
     public SendUpdate(update: messages.Update) {
