@@ -18,7 +18,7 @@ export class AppComponent {
 
     xx : number= 22 ;
 
-    socket = null;
+    socket : SocketIOClient.Socket = null;
 
     constructor()
     {
