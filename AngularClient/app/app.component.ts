@@ -1,6 +1,6 @@
 /// <reference path="../node_modules/@types/socket.io-client/index.d.ts" /> 
 
-import { Component, ElementRef } from '@angular/core';
+import { Component, ElementRef, HostListener } from '@angular/core';
 import * as io from "socket.io-client";
 
 @Component({
@@ -37,7 +37,7 @@ export class AppComponent
     });
 
     this.socket.on("update", (update) => {
-      console.log(update);
+      //console.log(update);
     });
 
     setInterval(() => {
@@ -47,5 +47,10 @@ export class AppComponent
         ctx.fillStyle = "rgb(" + Math.floor((Math.random() * 255) + 1) + ", 0, 255)";
         ctx.fillRect(0,0,150,75);
     }, 2000);
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  keyboardInput(event: KeyboardEvent) {
+    console.log(event.key);
   }
 }

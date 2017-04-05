@@ -29,7 +29,7 @@ var AppComponent = (function () {
             console.log("Connectedddd!");
         });
         this.socket.on("update", function (update) {
-            console.log(update);
+            //console.log(update);
         });
         setInterval(function () {
             _this.socket.emit("changeDirection", Math.floor((Math.random() * 4) + 1));
@@ -38,6 +38,15 @@ var AppComponent = (function () {
             ctx.fillRect(0, 0, 150, 75);
         }, 2000);
     };
+    AppComponent.prototype.keyboardInput = function (event) {
+        console.log(event.key);
+    };
+    __decorate([
+        core_1.HostListener('window:keydown', ['$event']), 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', [KeyboardEvent]), 
+        __metadata('design:returntype', void 0)
+    ], AppComponent.prototype, "keyboardInput", null);
     AppComponent = __decorate([
         core_1.Component({
             selector: 'my-app',
