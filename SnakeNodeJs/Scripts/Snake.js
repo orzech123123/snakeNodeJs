@@ -23,6 +23,7 @@ var Snake = (function () {
         segment.Random(this.width, this.height);
         this.Head = segment;
         this.direction = h.MathHelper.RandomIntInc(1, 4);
+        this.segmentsToAdd = [];
     };
     Snake.prototype.SendUpdate = function (update) {
         this.socket.emit(messageTypes.MessageTypes.Update, update);
