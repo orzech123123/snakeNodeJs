@@ -9,8 +9,6 @@ Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "ClientNodeJs", "ClientNodeJ
 EndProject
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "Data", "Data\Data.njsproj", "{3738FEDD-1D09-4383-9C86-90B7ED0FD6AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebClient", "WebClient\WebClient.csproj", "{E652F7F4-366B-4F3B-A4D2-FB7D09FAD38D}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{3738FEDD-1D09-4383-9C86-90B7ED0FD6AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3738FEDD-1D09-4383-9C86-90B7ED0FD6AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3738FEDD-1D09-4383-9C86-90B7ED0FD6AE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E652F7F4-366B-4F3B-A4D2-FB7D09FAD38D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E652F7F4-366B-4F3B-A4D2-FB7D09FAD38D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E652F7F4-366B-4F3B-A4D2-FB7D09FAD38D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E652F7F4-366B-4F3B-A4D2-FB7D09FAD38D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
