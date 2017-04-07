@@ -1,56 +1,116 @@
 /// <reference path="../node_modules/@types/socket.io-client/index.d.ts" /> 
+/// <reference path="../node_modules/linq-to-type/src/lib.es6.d.ts" /> 
 
 import { Component, ElementRef, HostListener } from '@angular/core';
 import * as io from "socket.io-client";
 
 @Component({
   selector: 'my-app',
-  template: `
-    <h2>{{first.content}}</h2>
-    <h2 [innerText]="xx"></h2>
-    <h1 [style.color]="color">{{first.content}}</h1>
-    <canvas id="canvas1" width="200" height="100"></canvas>
-  `,
-  
+  template: `<canvas id="canvas1" width="1280" height="500"></canvas>`
 })
 
 export class AppComponent 
 { 
-  self = this;
-  first = { content: 'Angular 2 Start' };
-  color = 'green';
-
-  xx : number= 22 ;
-
   socket : SocketIOClient.Socket = null;
-  canvas = null;
+  canvas : HTMLCanvasElement = null;
+  canvasContext : CanvasRenderingContext2D = null;
+  lastUpdate = [];
 
-  constructor(private elRef:ElementRef) {}
+  constructor(private elRef:ElementRef) {
+    for(let row = 0; row < 1000; row++)
+    {
+      let rowUpdate = [];
+      for(let col = 0; col < 1000; col++)
+        rowUpdate.push(" ");
+      this.lastUpdate.push(rowUpdate);
+    }
+  }
   
   ngAfterViewInit()
   {
     this.socket = io.connect("http://localhost:3000", { reconnection: true });
-    var canvas = <HTMLCanvasElement>this.elRef.nativeElement.querySelector('#canvas1');
+    this.canvas = <HTMLCanvasElement>this.elRef.nativeElement.querySelector('#canvas1');
+    this.canvasContext = this.canvas.getContext("2d");
 
     this.socket.on("connect", (server: SocketIOClient.Socket) => {
-        console.log("Connectedddd!");
+        console.log("Connected");
     });
 
     this.socket.on("update", (update) => {
-      //console.log(update);
+      this.drawUpdate(update);
     });
+  }
 
-    setInterval(() => {
-        this.socket.emit("changeDirection", Math.floor((Math.random() * 4) + 1));
+  private drawColor(row : number, col : number, color : string)
+  {
+      let dim = 10;
+      this.canvasContext.fillStyle = color;
+      this.canvasContext.fillRect(col * dim, row * dim, dim, dim);
+  }
 
-        var ctx = canvas.getContext("2d");
-        ctx.fillStyle = "rgb(" + Math.floor((Math.random() * 255) + 1) + ", 0, 255)";
-        ctx.fillRect(0,0,150,75);
-    }, 2000);
+  private drawSlot(row : number, col : number, type : string)
+  {
+      if(this.lastUpdate[row][col] == type)
+         return;
+
+      switch(type)
+      {
+        case "x": { this.drawColor(row, col, "green"); break;  }
+        case "o": { this.drawColor(row, col, "blue"); break;  }
+        case "red#": { this.drawColor(row, col, "red"); break;  }
+        case "yellow#": { this.drawColor(row, col, "yellow"); break;  }
+        case " ": { this.drawColor(row, col, "black"); break;  }
+      }
+
+      this.lastUpdate[row][col] = type;
+  }
+
+  private drawUpdate(update)
+  {
+      for (let row = 0; row < update.Height; row++) {
+          for (let col = 0; col < update.Width; col++) {
+              if (col == 0 || col == update.Width - 1 || row == 0 || row == update.Height - 1) {
+                  this.drawSlot(row, col, "o");
+                  continue;
+              }
+
+              var id = this.socket.id;
+
+              var isCookie = update.Cookies.any(p => p.X == col && p.Y == row);
+
+              var isMine = update.Snakes
+                  .where(s => s.Id == id)
+                  .selectMany(s => s.Points)
+                  .any((p: any) => p.X == col && p.Y == row);
+
+              var isOther = update.Snakes
+                  .where(s => s.Id != id)
+                  .selectMany(s => s.Points)
+                  .any((p: any) => p.X == col && p.Y == row);
+
+              if (isCookie)
+                  this.drawSlot(row, col, "x");
+              else if (isMine)
+                  this.drawSlot(row, col, "red#");
+              else if (isOther)
+                  this.drawSlot(row, col, "yellow#");
+              else
+                  this.drawSlot(row, col, " ");
+          }
+      }
   }
 
   @HostListener('window:keydown', ['$event'])
   keyboardInput(event: KeyboardEvent) {
     console.log(event.key);
+
+    if (event.key == "w")
+        this.socket.emit("changeDirection", 1);
+    if (event.key == "s")
+        this.socket.emit("changeDirection", 2);
+    if (event.key == "a")
+        this.socket.emit("changeDirection", 3);
+    if (event.key == "d")
+        this.socket.emit("changeDirection", 4);
   }
 }

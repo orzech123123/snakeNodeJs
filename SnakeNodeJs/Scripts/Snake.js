@@ -75,7 +75,6 @@ var Snake = (function () {
     };
     Snake.prototype.setDirection = function (direction) {
         this.direction = direction;
-        console.log(this.socket.id + "DIR:: " + direction);
     };
     Snake.prototype.GetCoordinations = function () {
         var result = new Array();

@@ -1,1 +1,2 @@
 D:\p\SnakeNodeJs\Data\bin\Microsoft.NodejsTools.WebRole.dll
+D:\p\SnakeNodeJs\Data\obj\Debug\Data.njsprojResolveAssemblyReference.cache

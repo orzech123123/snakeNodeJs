@@ -7,6 +7,11 @@ var MessageTypes = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(MessageTypes, "Disconnect", {
+        get: function () { return "disconnect"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(MessageTypes, "Connection", {
         get: function () { return "connection"; },
         enumerable: true,

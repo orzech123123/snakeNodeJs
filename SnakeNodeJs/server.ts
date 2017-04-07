@@ -61,10 +61,21 @@ class Server {
 
     private setOnConnection() {
         this.socket.on(messageTypes.MessageTypes.Connection, (client: SocketIO.Socket) => {
-            console.log("Client connected: " + client.id);
+            console.log("Snake connected: " + client.id);
 
             var snake = new Snake(client, this.width, this.height);
             this.snakes.push(snake);
+
+            this.setOnDisconnect(client);
+        });
+    }
+
+    private setOnDisconnect(socket: SocketIO.Socket)
+    {
+        socket.on(messageTypes.MessageTypes.Disconnect, () => {
+            let snake = this.snakes.firstOrDefault(s => s.GetId() == socket.id);
+            var index = this.snakes.indexOf(snake);
+            this.snakes.splice(index, 1);
         });
     }
 

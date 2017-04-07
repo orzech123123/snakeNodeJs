@@ -99,7 +99,6 @@ export class Snake implements IDrawable, IUpdatable {
     
     private setDirection(direction: enums.MoveDirection) {
         this.direction = direction;
-        console.log(this.socket.id + "DIR:: " + direction);
     }
     
     public GetCoordinations(): messages.Point[] {

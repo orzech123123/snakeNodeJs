@@ -39,9 +39,18 @@ var Server = (function () {
     Server.prototype.setOnConnection = function () {
         var _this = this;
         this.socket.on(messageTypes.MessageTypes.Connection, function (client) {
-            console.log("Client connected: " + client.id);
+            console.log("Snake connected: " + client.id);
             var snake = new Snake(client, _this.width, _this.height);
             _this.snakes.push(snake);
+            _this.setOnDisconnect(client);
+        });
+    };
+    Server.prototype.setOnDisconnect = function (socket) {
+        var _this = this;
+        socket.on(messageTypes.MessageTypes.Disconnect, function () {
+            var snake = _this.snakes.firstOrDefault(function (s) { return s.GetId() == socket.id; });
+            var index = _this.snakes.indexOf(snake);
+            _this.snakes.splice(index, 1);
         });
     };
     Server.prototype.listen = function () {
