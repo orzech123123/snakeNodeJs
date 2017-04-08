@@ -11,10 +11,10 @@ var Snake = snake.Snake;
 var Server = (function () {
     function Server() {
         this.snakes = [];
-        this.width = 50;
-        this.height = 20;
+        this.width = 25;
+        this.height = 25;
         this.cookies = [];
-        this.cookiesCount = 5;
+        this.cookiesCount = 8;
     }
     Server.prototype.Start = function () {
         this.application = express();

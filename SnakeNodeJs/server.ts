@@ -21,11 +21,11 @@ class Server {
     private server: http.Server;
     private socket: SocketIO.Server;
 
-    private width = 50;
-    private height = 20;
+    private width = 25;
+    private height = 25;
 
     private cookies: Array<messages.Point> = [];
-    private cookiesCount = 5;
+    private cookiesCount = 8;
 
     constructor() {
     }

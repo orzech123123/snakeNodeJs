@@ -39,42 +39,21 @@ var AppComponent = (function () {
         });
     };
     AppComponent.prototype.drawColor = function (row, col, color) {
-        var dim = 10;
-        this.canvasContext.fillStyle = color;
-        this.canvasContext.fillRect(col * dim, row * dim, dim, dim);
+        var dim = 14;
+        var img = this.elRef.nativeElement.querySelector("#" + color);
+        this.canvasContext.drawImage(img, col * dim, row * dim, dim, dim);
     };
     AppComponent.prototype.drawSlot = function (row, col, type) {
         if (this.lastUpdate[row][col] == type)
             return;
-        switch (type) {
-            case "x": {
-                this.drawColor(row, col, "green");
-                break;
-            }
-            case "o": {
-                this.drawColor(row, col, "blue");
-                break;
-            }
-            case "red#": {
-                this.drawColor(row, col, "red");
-                break;
-            }
-            case "yellow#": {
-                this.drawColor(row, col, "yellow");
-                break;
-            }
-            case " ": {
-                this.drawColor(row, col, "black");
-                break;
-            }
-        }
+        this.drawColor(row, col, type);
         this.lastUpdate[row][col] = type;
     };
     AppComponent.prototype.drawUpdate = function (update) {
         var _loop_1 = function(row) {
             var _loop_2 = function(col) {
                 if (col == 0 || col == update.Width - 1 || row == 0 || row == update.Height - 1) {
-                    this_1.drawSlot(row, col, "o");
+                    this_1.drawSlot(row, col, "blue");
                     return "continue";
                 }
                 id = this_1.socket.id;
@@ -88,13 +67,13 @@ var AppComponent = (function () {
                     .selectMany(function (s) { return s.Points; })
                     .any(function (p) { return p.X == col && p.Y == row; });
                 if (isCookie)
-                    this_1.drawSlot(row, col, "x");
+                    this_1.drawSlot(row, col, "green");
                 else if (isMine)
-                    this_1.drawSlot(row, col, "red#");
+                    this_1.drawSlot(row, col, "red");
                 else if (isOther)
-                    this_1.drawSlot(row, col, "yellow#");
+                    this_1.drawSlot(row, col, "yellow");
                 else
-                    this_1.drawSlot(row, col, " ");
+                    this_1.drawSlot(row, col, "white");
             };
             for (var col = 0; col < update.Width; col++) {
                 var state_1 = _loop_2(col);
@@ -127,7 +106,7 @@ var AppComponent = (function () {
     AppComponent = __decorate([
         core_1.Component({
             selector: 'my-app',
-            template: "<canvas id=\"canvas1\" width=\"1280\" height=\"500\"></canvas>"
+            template: "\n  <canvas id=\"canvas1\" width=\"1280\" height=\"500\"></canvas>\n  <img src=\"white.jpg\" id=\"white\" style=\"display: none;\" />\n  <img src=\"green.jpg\" id=\"green\" style=\"display: none;\" />\n  <img src=\"red.jpg\" id=\"red\" style=\"display: none;\" />\n  <img src=\"yellow.jpg\" id=\"yellow\" style=\"display: none;\" />\n  <img src=\"blue.jpg\" id=\"blue\" style=\"display: none;\" />"
         }), 
         __metadata('design:paramtypes', [core_1.ElementRef])
     ], AppComponent);

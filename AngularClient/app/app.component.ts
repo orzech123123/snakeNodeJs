@@ -6,7 +6,13 @@ import * as io from "socket.io-client";
 
 @Component({
   selector: 'my-app',
-  template: `<canvas id="canvas1" width="1280" height="500"></canvas>`
+  template: `
+  <canvas id="canvas1" width="1280" height="500"></canvas>
+  <img src="white.jpg" id="white" style="display: none;" />
+  <img src="green.jpg" id="green" style="display: none;" />
+  <img src="red.jpg" id="red" style="display: none;" />
+  <img src="yellow.jpg" id="yellow" style="display: none;" />
+  <img src="blue.jpg" id="blue" style="display: none;" />`
 })
 
 export class AppComponent 
@@ -43,9 +49,9 @@ export class AppComponent
 
   private drawColor(row : number, col : number, color : string)
   {
-      let dim = 10;
-      this.canvasContext.fillStyle = color;
-      this.canvasContext.fillRect(col * dim, row * dim, dim, dim);
+      let dim = 14;
+      var img= this.elRef.nativeElement.querySelector("#" + color);
+      this.canvasContext.drawImage(img, col * dim, row * dim, dim, dim);
   }
 
   private drawSlot(row : number, col : number, type : string)
@@ -53,15 +59,7 @@ export class AppComponent
       if(this.lastUpdate[row][col] == type)
          return;
 
-      switch(type)
-      {
-        case "x": { this.drawColor(row, col, "green"); break;  }
-        case "o": { this.drawColor(row, col, "blue"); break;  }
-        case "red#": { this.drawColor(row, col, "red"); break;  }
-        case "yellow#": { this.drawColor(row, col, "yellow"); break;  }
-        case " ": { this.drawColor(row, col, "black"); break;  }
-      }
-
+      this.drawColor(row, col, type);
       this.lastUpdate[row][col] = type;
   }
 
@@ -70,7 +68,7 @@ export class AppComponent
       for (let row = 0; row < update.Height; row++) {
           for (let col = 0; col < update.Width; col++) {
               if (col == 0 || col == update.Width - 1 || row == 0 || row == update.Height - 1) {
-                  this.drawSlot(row, col, "o");
+                  this.drawSlot(row, col, "blue");
                   continue;
               }
 
@@ -89,13 +87,13 @@ export class AppComponent
                   .any((p: any) => p.X == col && p.Y == row);
 
               if (isCookie)
-                  this.drawSlot(row, col, "x");
+                  this.drawSlot(row, col, "green");
               else if (isMine)
-                  this.drawSlot(row, col, "red#");
+                  this.drawSlot(row, col, "red");
               else if (isOther)
-                  this.drawSlot(row, col, "yellow#");
+                  this.drawSlot(row, col, "yellow");
               else
-                  this.drawSlot(row, col, " ");
+                  this.drawSlot(row, col, "white");
           }
       }
   }
