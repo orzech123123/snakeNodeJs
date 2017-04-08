@@ -39,17 +39,20 @@ var AppComponent = (function () {
         });
     };
     AppComponent.prototype.drawColor = function (row, col, color) {
-        var dim = 14;
+        var dim = 20;
         var img = this.elRef.nativeElement.querySelector("#" + color);
         this.canvasContext.drawImage(img, col * dim, row * dim, dim, dim);
     };
     AppComponent.prototype.drawSlot = function (row, col, type) {
-        if (this.lastUpdate[row][col] == type)
-            return;
+        //TODO
+        //   if(this.lastUpdate[row][col] == type)
+        //      return;
         this.drawColor(row, col, type);
         this.lastUpdate[row][col] = type;
     };
     AppComponent.prototype.drawUpdate = function (update) {
+        this.canvasContext.fillStyle = "white";
+        this.canvasContext.fillRect(0, 0, 800, 600);
         var _loop_1 = function(row) {
             var _loop_2 = function(col) {
                 if (col == 0 || col == update.Width - 1 || row == 0 || row == update.Height - 1) {
@@ -106,7 +109,7 @@ var AppComponent = (function () {
     AppComponent = __decorate([
         core_1.Component({
             selector: 'my-app',
-            template: "\n  <canvas id=\"canvas1\" width=\"1280\" height=\"500\"></canvas>\n  <img src=\"white.jpg\" id=\"white\" style=\"display: none;\" />\n  <img src=\"green.jpg\" id=\"green\" style=\"display: none;\" />\n  <img src=\"red.jpg\" id=\"red\" style=\"display: none;\" />\n  <img src=\"yellow.jpg\" id=\"yellow\" style=\"display: none;\" />\n  <img src=\"blue.jpg\" id=\"blue\" style=\"display: none;\" />"
+            template: "\n  <canvas id=\"canvas1\" width=\"1280\" height=\"500\"></canvas>\n  <img src=\"white.png\" id=\"white\" style=\"display: none;\" />\n  <img src=\"green.png\" id=\"green\" style=\"display: none;\" />\n  <img src=\"red.png\" id=\"red\" style=\"display: none;\" />\n  <img src=\"yellow.png\" id=\"yellow\" style=\"display: none;\" />\n  <img src=\"blue.png\" id=\"blue\" style=\"display: none;\" />"
         }), 
         __metadata('design:paramtypes', [core_1.ElementRef])
     ], AppComponent);

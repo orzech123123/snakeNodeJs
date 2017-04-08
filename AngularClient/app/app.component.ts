@@ -8,11 +8,11 @@ import * as io from "socket.io-client";
   selector: 'my-app',
   template: `
   <canvas id="canvas1" width="1280" height="500"></canvas>
-  <img src="white.jpg" id="white" style="display: none;" />
-  <img src="green.jpg" id="green" style="display: none;" />
-  <img src="red.jpg" id="red" style="display: none;" />
-  <img src="yellow.jpg" id="yellow" style="display: none;" />
-  <img src="blue.jpg" id="blue" style="display: none;" />`
+  <img src="white.png" id="white" style="display: none;" />
+  <img src="green.png" id="green" style="display: none;" />
+  <img src="red.png" id="red" style="display: none;" />
+  <img src="yellow.png" id="yellow" style="display: none;" />
+  <img src="blue.png" id="blue" style="display: none;" />`
 })
 
 export class AppComponent 
@@ -49,15 +49,16 @@ export class AppComponent
 
   private drawColor(row : number, col : number, color : string)
   {
-      let dim = 14;
+      let dim = 20;
       var img= this.elRef.nativeElement.querySelector("#" + color);
       this.canvasContext.drawImage(img, col * dim, row * dim, dim, dim);
   }
 
   private drawSlot(row : number, col : number, type : string)
   {
-      if(this.lastUpdate[row][col] == type)
-         return;
+    //TODO
+    //   if(this.lastUpdate[row][col] == type)
+    //      return;
 
       this.drawColor(row, col, type);
       this.lastUpdate[row][col] = type;
@@ -65,6 +66,9 @@ export class AppComponent
 
   private drawUpdate(update)
   {
+      this.canvasContext.fillStyle="white";
+      this.canvasContext.fillRect(0,0,800,600);
+
       for (let row = 0; row < update.Height; row++) {
           for (let col = 0; col < update.Width; col++) {
               if (col == 0 || col == update.Width - 1 || row == 0 || row == update.Height - 1) {
