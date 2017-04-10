@@ -7,7 +7,8 @@ import * as io from "socket.io-client";
 @Component({
   selector: 'my-app',
   template: `
-  <canvas id="canvas1" width="1280" height="500"></canvas>
+  <canvas id="canvas1" width="0" height="0"></canvas>
+  <div style="color: white" id="scorePanel"></div>
   <img src="white.png" id="white" style="display: none;" />
   <img src="green.png" id="green" style="display: none;" />
   <img src="red.png" id="red" style="display: none;" />
@@ -15,12 +16,15 @@ import * as io from "socket.io-client";
   <img src="blue.png" id="blue" style="display: none;" />`
 })
 
+
 export class AppComponent 
 { 
   socket : SocketIOClient.Socket = null;
   canvas : HTMLCanvasElement = null;
+  scorePanel : HTMLElement = null;
   canvasContext : CanvasRenderingContext2D = null;
   lastUpdate = [];
+  dim = 20;
 
   constructor(private elRef:ElementRef) {
     for(let row = 0; row < 1000; row++)
@@ -35,6 +39,7 @@ export class AppComponent
   ngAfterViewInit()
   {
     this.socket = io.connect("http://localhost:3000", { reconnection: true });
+    this.scorePanel = this.elRef.nativeElement.querySelector('#scorePanel');
     this.canvas = <HTMLCanvasElement>this.elRef.nativeElement.querySelector('#canvas1');
     this.canvasContext = this.canvas.getContext("2d");
 
@@ -43,15 +48,26 @@ export class AppComponent
     });
 
     this.socket.on("update", (update) => {
+      if(this.canvas.width == 0 && this.canvas.height == 0){
+          let width = update.Width * this.dim;
+          let height = update.Height * this.dim
+          this.canvasContext.fillStyle = "black";
+          this.canvasContext.fillRect(0, 0, width, height);
+          this.canvas.width = width;
+          this.canvas.height = height;
+      }
+
+      this.drawScore(update);
       this.drawUpdate(update);
     });
+
+    this.socket.emit("connectionAck", prompt());
   }
 
   private drawColor(row : number, col : number, color : string)
   {
-      let dim = 20;
       var img= this.elRef.nativeElement.querySelector("#" + color);
-      this.canvasContext.drawImage(img, col * dim, row * dim, dim, dim);
+      this.canvasContext.drawImage(img, col * this.dim, row * this.dim, this.dim, this.dim);
   }
 
   private drawSlot(row : number, col : number, type : string)
@@ -62,6 +78,20 @@ export class AppComponent
 
       this.drawColor(row, col, type);
       this.lastUpdate[row][col] = type;
+  }
+
+  private drawScore(update)
+  {
+      var snakeScores = <Array<SnakeScore>>update.Snakes
+      .select(s => new SnakeScore(s.Name, s.Score))
+      .sort((s1, s2) => -(s1.score - s2.score));
+
+      let innerHtml = "<ol>";
+      for (var snake of snakeScores)
+          innerHtml += ("<li>" + snake.name + " - " + snake.score + "</li>");
+      innerHtml += "</ol>";
+
+      this.scorePanel.innerHTML = innerHtml;  
   }
 
   private drawUpdate(update)
@@ -115,4 +145,12 @@ export class AppComponent
     if (event.key == "d")
         this.socket.emit("changeDirection", 4);
   }
+}
+
+class SnakeScore
+{
+    constructor(public name : string, public score : number)
+    {
+
+    }
 }

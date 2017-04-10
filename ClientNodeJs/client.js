@@ -23,8 +23,10 @@ var Client = (function () {
             this.socket.emit(messageTypes.MessageTypes.ChangeDirection, enums.MoveDirection.Right);
     };
     Client.prototype.setOnConnect = function () {
+        var _this = this;
         this.socket.on(messageTypes.MessageTypes.Connect, function (server) {
             console.log("Connected!");
+            _this.socket.emit(messageTypes.MessageTypes.ConnectionAck, "_consoleClient_");
         });
     };
     Client.prototype.setOnUpdate = function () {

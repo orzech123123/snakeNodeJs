@@ -16,7 +16,7 @@ import * as snake from "./Scripts/Snake";
 import Snake = snake.Snake;
 
 class Server {
-    public snakes: Array<snake.Snake> = [];
+    public allSnakes: Array<snake.Snake> = [];
     private application: express.Express;
     private server: http.Server;
     private socket: SocketIO.Server;
@@ -26,7 +26,11 @@ class Server {
 
     private cookies: Array<messages.Point> = [];
     private cookiesCount = 8;
-
+    
+    private snakes(): Array<snake.Snake>  {
+        return this.allSnakes.where(s => s.IsEnabled());
+    };
+    
     constructor() {
     }
 
@@ -49,7 +53,7 @@ class Server {
         
         while (toCreate > 0) {
             var point = new messages.Point(h.MathHelper.RandomIntInc(1, this.width - 2), h.MathHelper.RandomIntInc(1, this.height - 2));
-            var snakeCollisions = h.CollisionHelper.CollisionPoints(<any>this.snakes.selectMany(s => s.GetCoordinations()), [point]);
+            var snakeCollisions = h.CollisionHelper.CollisionPoints(<any>this.snakes().selectMany(s => s.GetCoordinations()), [point]);
             var cookieCollisions = h.CollisionHelper.CollisionPoints(this.cookies, [point]);
 
             if (!snakeCollisions.any() && !cookieCollisions.any())
@@ -64,7 +68,7 @@ class Server {
             console.log("Snake connected: " + client.id);
 
             var snake = new Snake(client, this.width, this.height);
-            this.snakes.push(snake);
+            this.allSnakes.push(snake);
 
             this.setOnDisconnect(client);
         });
@@ -73,9 +77,9 @@ class Server {
     private setOnDisconnect(socket: SocketIO.Socket)
     {
         socket.on(messageTypes.MessageTypes.Disconnect, () => {
-            let snake = this.snakes.firstOrDefault(s => s.GetId() == socket.id);
-            var index = this.snakes.indexOf(snake);
-            this.snakes.splice(index, 1);
+            let snake = this.allSnakes.firstOrDefault(s => s.GetId() == socket.id);
+            var index = this.allSnakes.indexOf(snake);
+            this.allSnakes.splice(index, 1);
         });
     }
 
@@ -86,7 +90,7 @@ class Server {
     }
 
     private processCollisions() {
-        for (let snake of this.snakes) {
+        for (let snake of this.snakes()) {
             let head = snake.Head;
             let next = snake.Head.Next;
 
@@ -100,8 +104,8 @@ class Server {
             }
         }
 
-        for (let snake of this.snakes) {
-            for (let snake2 of this.snakes) {
+        for (let snake of this.snakes()) {
+            for (let snake2 of this.snakes()) {
                 if (snake.GetId() == snake2.GetId())
                     continue;
 
@@ -116,9 +120,10 @@ class Server {
             }
         }
 
-        for (let snake of this.snakes) {
+        for (let snake of this.snakes()) {
             let collisionPoints = h.CollisionHelper.CollisionPoints(snake.Head.GetCoordinations(), this.cookies);
             if (collisionPoints.any()) {
+                snake.AddScore();
                 snake.AddSegment();
                 let firstIndex = this.cookies.indexOf(collisionPoints[0]);
                 let secondIndex = this.cookies.indexOf(collisionPoints[1]);
@@ -130,7 +135,7 @@ class Server {
         }
         this.RecreateCookies();
         
-        for (let snake of this.snakes) {
+        for (let snake of this.snakes()) {
             if (snake.GetCoordinations().any(p => p.X == 0 || p.X == this.width - 1 || p.Y == 0 || p.Y == this.height - 1)) {
                 snake.Recreate();
             }
@@ -138,20 +143,20 @@ class Server {
     }
 
     private update(): void {
-        for (let snake of this.snakes) {
+        for (let snake of this.snakes()) {
             snake.Update();
         }
         
        this.processCollisions();
         
         var update = new messages.Update();
-        
-        update.Snakes = this.snakes.select(s => new messages.SnakeDto(s.GetCoordinations(), s.GetId()));
+
+        update.Snakes = this.snakes().select(s => new messages.SnakeDto(s.GetCoordinations(), s.GetId(), s.GetName(), s.GetScore()));
         update.Width = this.width;
         update.Height = this.height;
         update.Cookies = this.cookies;
 
-        for (let snake of this.snakes) {
+        for (let snake of this.snakes()) {
             snake.SendUpdate(update);
         }
     }

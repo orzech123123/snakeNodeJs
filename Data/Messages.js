@@ -8,9 +8,11 @@ var Update = (function () {
 }());
 exports.Update = Update;
 var SnakeDto = (function () {
-    function SnakeDto(points, id) {
+    function SnakeDto(points, id, name, score) {
         this.Points = points;
         this.Id = id;
+        this.Name = name;
+        this.Score = score;
     }
     return SnakeDto;
 }());

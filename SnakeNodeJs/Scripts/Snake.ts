@@ -15,6 +15,8 @@ import IUpdatable = interfaces.IUpdatable;
 
 export class Snake implements IDrawable, IUpdatable {
     private lastUpdateAck: number;
+    private name: string;
+    private score: number = 0;
     private direction : enums.MoveDirection;
     private socket: SocketIO.Socket;
     public Head: ss.SnakeSegment;
@@ -24,6 +26,7 @@ export class Snake implements IDrawable, IUpdatable {
     constructor(socket: SocketIO.Socket, private width: number, private height: number) {
         this.socket = socket;
 
+        this.setOnConnectionAck();
         this.setOnUpdateAck();
         this.setOnChangeDirection();
 
@@ -44,6 +47,18 @@ export class Snake implements IDrawable, IUpdatable {
 
     public SendUpdate(update: messages.Update) {
         this.socket.emit(messageTypes.MessageTypes.Update, update);
+    }
+
+    public AddScore() {
+        this.score++;
+    }
+    
+    public GetName() {
+        return this.name;
+    }
+
+    public GetScore() {
+        return this.score;
     }
 
     public GetId() {
@@ -76,6 +91,17 @@ export class Snake implements IDrawable, IUpdatable {
 
     private move() {
         this.Head.MoveDirection(this.direction);
+    }
+
+    private setOnConnectionAck = () : void => {
+        this.socket.on(messageTypes.MessageTypes.ConnectionAck, (name : string) => {
+            this.name = name;
+        });
+    }
+
+    public IsEnabled()
+    {
+        return !!this.name;
     }
     
     private setOnUpdateAck(): void {

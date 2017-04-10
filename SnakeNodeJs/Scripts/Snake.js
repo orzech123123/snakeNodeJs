@@ -7,10 +7,18 @@ var h = require("./Helpers");
 var ss = require("./SnakeSegment");
 var Snake = (function () {
     function Snake(socket, width, height) {
+        var _this = this;
         this.width = width;
         this.height = height;
+        this.score = 0;
         this.segmentsToAdd = [];
+        this.setOnConnectionAck = function () {
+            _this.socket.on(messageTypes.MessageTypes.ConnectionAck, function (name) {
+                _this.name = name;
+            });
+        };
         this.socket = socket;
+        this.setOnConnectionAck();
         this.setOnUpdateAck();
         this.setOnChangeDirection();
         this.Recreate();
@@ -27,6 +35,15 @@ var Snake = (function () {
     };
     Snake.prototype.SendUpdate = function (update) {
         this.socket.emit(messageTypes.MessageTypes.Update, update);
+    };
+    Snake.prototype.AddScore = function () {
+        this.score++;
+    };
+    Snake.prototype.GetName = function () {
+        return this.name;
+    };
+    Snake.prototype.GetScore = function () {
+        return this.score;
     };
     Snake.prototype.GetId = function () {
         return this.socket.id;
@@ -53,6 +70,9 @@ var Snake = (function () {
     };
     Snake.prototype.move = function () {
         this.Head.MoveDirection(this.direction);
+    };
+    Snake.prototype.IsEnabled = function () {
+        return !!this.name;
     };
     Snake.prototype.setOnUpdateAck = function () {
         var _this = this;

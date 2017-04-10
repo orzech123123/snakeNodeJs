@@ -17,6 +17,11 @@ var MessageTypes = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(MessageTypes, "ConnectionAck", {
+        get: function () { return "connectionAck"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(MessageTypes, "Update", {
         get: function () { return "update"; },
         enumerable: true,

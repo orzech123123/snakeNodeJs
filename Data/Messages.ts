@@ -7,13 +7,17 @@
 
 export class SnakeDto
 {
-    constructor(points: Array<Point>, id: string) {
+    constructor(points: Array<Point>, id: string, name : string, score : number) {
         this.Points = points;
         this.Id = id;
+        this.Name = name;
+        this.Score = score;
     }
 
     public Points: Array<Point>;
-    public Id : string;
+    public Id: string;
+    public Name: string;
+    public Score: number;
 }
 
 export class Point {

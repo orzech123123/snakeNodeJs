@@ -40,6 +40,8 @@ class Client {
     private setOnConnect(): void {
         this.socket.on(messageTypes.MessageTypes.Connect, (server: SocketIOClient.Socket) => {
             console.log("Connected!");
+
+            this.socket.emit(messageTypes.MessageTypes.ConnectionAck, "_consoleClient_");
         });
     }
 
